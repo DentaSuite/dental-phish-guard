@@ -114,6 +114,7 @@
       <tr><th>Threat type</th><td>Business email compromise → credential-themed file-share lure → remote-access trojan (Windows)</td></tr>
       <tr><th>Last updated</th><td id="meta-updated">23 July 2026</td></tr>
       <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 6).</td></tr>
+      <tr><th>Source code</th><td>All tooling and this site are open source for independent review: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a></td></tr>
     </table>
     <nav class="toc" aria-label="Contents">
       <strong>Contents</strong>
@@ -217,17 +218,17 @@
     <h2><span class="no">5</span>Resources</h2>
     <ul class="files">
       <li><span class="ftype">PDF · A4 poster</span> <a href="downloads/DO-NOT-OPEN-Poster.pdf" download>"Do not open" staff notice</a>
-        <span class="fdesc">The sample email with identification and response instructions, for display where email is checked.</span></li>
+        <span class="fdesc">The sample email with identification and response instructions, for display where email is checked. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/poster.html" rel="noopener">Source on GitHub</a></span></li>
       <li><span class="ftype">DOCX · booklet</span> <a href="downloads/Staff-Training-Booklet-v2.docx" download>Staff training booklet</a>
-        <span class="fdesc">Attack description, indicators, and post-click procedure, suitable for a 15-minute staff meeting.</span></li>
+        <span class="fdesc">Attack description, indicators, and post-click procedure, suitable for a 15-minute staff meeting. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/Staff-Training-Booklet-v2.docx" rel="noopener">Same file on GitHub</a></span></li>
       <li><span class="ftype">ZIP · Chrome/Edge</span> <a href="downloads/dental-phish-guard-extension.zip" download>Phish Guard browser extension</a>
-        <span class="fdesc">Displays a warning banner on messages matching campaign indicators in Gmail and Outlook on the web; optionally submits detections to this advisory's statistics (sender address and domains only — message content is never transmitted).</span></li>
+        <span class="fdesc">Displays a warning banner on messages matching campaign indicators in Gmail and Outlook on the web; optionally submits detections to this advisory's statistics (sender address and domains only — message content is never transmitted). <a href="https://github.com/DentaSuite/dental-phish-guard/tree/main/extension" rel="noopener">Read the code on GitHub before installing</a></span></li>
       <li><span class="ftype">ZIP · Firefox</span> <a href="downloads/dental-phish-guard-firefox.zip" download>Phish Guard for Firefox</a>
-        <span class="fdesc">Installation steps are in the IT configuration guide.</span></li>
+        <span class="fdesc">Installation steps are in the IT configuration guide. <a href="https://github.com/DentaSuite/dental-phish-guard/tree/main/extension-firefox" rel="noopener">Read the code on GitHub</a></span></li>
       <li><span class="ftype">HTML · guide</span> <a href="it-guide.html">IT configuration guide</a>
-        <span class="fdesc">Mail-transport rules for Microsoft 365 and Google Workspace (these also protect the Outlook desktop application and mobile devices), DNS filtering, and workstation hardening.</span></li>
+        <span class="fdesc">Mail-transport rules for Microsoft 365 and Google Workspace (these also protect the Outlook desktop application and mobile devices), DNS filtering, and workstation hardening. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/site/it-guide.html" rel="noopener">Source on GitHub</a></span></li>
     </ul>
-    <p class="muted">All tooling is open source and can be reviewed before installation: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a>. Detection reports are write-only; submitted data is readable only by the advisory coordinator.</p>
+    <p class="muted">Everything above, including this site itself, is published in full at <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a> so you or your IT provider can verify exactly what it does before installing. Detection reports are write-only; submitted data is readable only by the advisory coordinator.</p>
   </div>
 </section>
 
