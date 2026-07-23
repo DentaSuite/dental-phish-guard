@@ -66,6 +66,8 @@ Everything on it is free and open source, so your IT provider can check exactly 
 
 Please share this with any dentist, practice or dental group you know. Every clinic that gets caught becomes a launchpad for attacking dozens more. Stay sharp and verify by phone.
 
+Dr James Lee
+
 ---
 
 # Notes for you (not part of the post)
