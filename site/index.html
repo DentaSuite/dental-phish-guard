@@ -113,7 +113,7 @@
       <tr><th>Sector affected</th><td>Dental practices, Australia (current cluster: Victoria)</td></tr>
       <tr><th>Threat type</th><td>Business email compromise → credential-themed file-share lure → remote-access trojan (Windows)</td></tr>
       <tr><th>Last updated</th><td id="meta-updated">23 July 2026</td></tr>
-      <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 6).</td></tr>
+      <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 7).</td></tr>
       <tr><th>Source code</th><td>All tooling and this site are open source for independent review: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a></td></tr>
     </table>
     <nav class="toc" aria-label="Contents">
@@ -122,6 +122,7 @@
         <li><a href="#summary">Summary</a></li>
         <li><a href="#indicators">Indicators and example</a></li>
         <li><a href="#statistics">Current statistics</a></li>
+        <li><a href="#selfcheck">How to tell if your practice is affected</a></li>
         <li><a href="#actions">Recommended actions</a></li>
         <li><a href="#resources">Resources</a></li>
         <li><a href="#reporting">Reporting a sighting</a></li>
@@ -192,14 +193,45 @@
   </div>
 </section>
 
+<section id="selfcheck">
+  <div class="wrap">
+    <h2><span class="no">4</span>How to tell if your practice is affected</h2>
+    <p>There are two distinct questions: whether a practice computer is infected, and whether the practice mailbox is compromised and being used to attack others. Either can be true without the other, and a compromised mailbox usually produces no symptoms visible to its owner — most affected practices learn of it only when a colleague telephones to ask about a strange email.</p>
+    <h3>Signs a computer is infected</h3>
+    <ul>
+      <li>A staff member opened one of these links on a Windows machine, a download ran, or a <b>"Windows Update" screen appeared at an unusual time</b> — treat the machine as compromised regardless of how it behaved afterwards.</li>
+      <li>Cursor movement or windows opening without input; the machine awake or busy when it should be idle.</li>
+      <li>Remote-access software the practice did not install — check installed programs and the system tray for tools such as AnyDesk, ScreenConnect/ConnectWise, Atera, RustDesk, or TeamViewer that nobody recognises.</li>
+      <li>Windows user accounts nobody created, or Microsoft Defender/antivirus found disabled.</li>
+    </ul>
+    <h3>Signs the practice mailbox is compromised</h3>
+    <ul>
+      <li><b>Colleagues contact you asking whether you sent them a shared file.</b> This is the most common discovery route — take every such call seriously.</li>
+      <li>Bounce or "undeliverable" messages for emails the practice never sent.</li>
+      <li>Mailbox rules the practice did not create — particularly rules forwarding mail externally, or moving replies to rarely viewed folders to hide them. (Operators typically delete their sent messages, so an empty Sent folder proves nothing.)</li>
+      <li>Sign-in alerts or session activity from unfamiliar locations or devices.</li>
+      <li>Changed recovery details, unfamiliar "app passwords", or third-party applications with mailbox access that nobody authorised.</li>
+    </ul>
+    <h3>Ten-minute self-check</h3>
+    <ol>
+      <li><b>Gmail accounts:</b> run the Security Checkup at <code>myaccount.google.com/security</code> (devices, recent activity, third-party access); in Gmail settings review <i>Forwarding and POP/IMAP</i> and <i>Filters and blocked addresses</i>; click <i>Details</i> at the bottom-right of the inbox for recent session activity.</li>
+      <li><b>Microsoft 365 / Outlook:</b> review sign-in activity at <code>account.microsoft.com</code> (or Entra sign-in logs, if administered); in Outlook settings review <i>Mail → Rules</i> and <i>Forwarding</i>; administrators can run a message trace for unexpected outbound volume.</li>
+      <li>Search Sent and Deleted Items for <i>"shared a file"</i>.</li>
+      <li>Review installed programs on each Windows machine for the remote-access tools listed above.</li>
+      <li>Ask staff directly whether anyone has opened a file-share link recently. A no-blame framing gets truthful answers; minutes matter more than fault.</li>
+    </ol>
+    <p>If any indicator above is present, proceed to section 8 (incident response) and report via section 7. If in doubt, treat the mailbox as compromised — a password change with multi-factor enrolment costs minutes; a missed compromise costs weeks.</p>
+  </div>
+</section>
+
 <section id="actions">
   <div class="wrap">
-    <h2><span class="no">4</span>Recommended actions</h2>
+    <h2><span class="no">5</span>Recommended actions</h2>
     <h3>All staff</h3>
     <ul>
       <li>Treat any unexpected "shared a file/folder" email as suspect regardless of sender; verify by telephone before opening links.</li>
       <li>Do not open share links on a practice computer because the message requests it; that instruction is itself an indicator.</li>
-      <li>Report suspect messages to the practice owner or manager, and via section 6 below.</li>
+      <li>Report suspect messages to the practice owner or manager, and via section 7 below.</li>
     </ul>
     <h3>Practice owners and IT providers</h3>
     <ul>
@@ -215,7 +247,7 @@
 
 <section id="resources">
   <div class="wrap">
-    <h2><span class="no">5</span>Resources</h2>
+    <h2><span class="no">6</span>Resources</h2>
     <ul class="files">
       <li><span class="ftype">PDF · A4 poster</span> <a href="downloads/DO-NOT-OPEN-Poster.pdf" download>"Do not open" staff notice</a>
         <span class="fdesc">The sample email with identification and response instructions, for display where email is checked. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/poster.html" rel="noopener">Source on GitHub</a></span></li>
@@ -234,7 +266,7 @@
 
 <section id="reporting">
   <div class="wrap">
-    <h2><span class="no">6</span>Reporting a sighting</h2>
+    <h2><span class="no">7</span>Reporting a sighting</h2>
     <p>Reports serve two purposes: the practice whose account was compromised is notified privately by telephone, and new infrastructure is added to the indicator list, the browser extension, and takedown requests. Reports are reviewed individually; nothing is published automatically and reporting practices are not named.</p>
     <p class="muted">The most useful evidence is the original message file. In Gmail: message menu (⋮) → "Download message". Attach it to the pre-filled email this form produces. Do not include patient information.</p>
     <form id="reportForm">
@@ -267,7 +299,7 @@
 
 <section id="response">
   <div class="wrap">
-    <h2><span class="no">7</span>Incident response after a click</h2>
+    <h2><span class="no">8</span>Incident response after a click</h2>
     <ol>
       <li>Disconnect the affected computer from the network immediately and cease using it.</li>
       <li>Reimage the machine (wipe and reinstall Windows). Antivirus remediation alone is insufficient where interactive remote access has occurred.</li>
