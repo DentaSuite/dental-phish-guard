@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Dental Phish Guard",
+  "version": "0.3.0",
+  "description": "Flags folder-share phishing emails from compromised colleague accounts (fresh burner domains, fake file-share lures) in Gmail and Outlook on the web, and keeps a local list of affected clinics so you can warn them.",
+  "browser_specific_settings": {
+    "gecko": { "id": "phish-guard@dentalphishwatch.au", "strict_min_version": "115.0" }
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://vgtwdkwdtmgjagbtqrcz.supabase.co/*"],
+  "background": { "scripts": ["background.js"] },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Dental Phish Guard — affected clinics list"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*",
+        "https://outlook.live.com/*"
+      ],
+      "js": ["rules.js", "content.js"],
+      "css": ["banner.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Phish Guard test harness</title>
+  <link rel="stylesheet" href="banner.css">
+  <style>body{font-family:system-ui;max-width:700px;margin:40px auto;} .msg{border:1px solid #ccc;padding:16px;border-radius:8px;margin-bottom:24px;}</style>
+</head>
+<body>
+  <h1>Test harness</h1>
+
+  <h2>1. Simulated attack email (should be flagged)</h2>
+  <div class="msg pg-test-message" id="bad">
+    <p>Hi, I have shared a folder with you containing the patient referral documents.</p>
+    <p>Please review the documents here: <a href="https://xornavo.vu/file/">Open shared folder (OneDrive)</a></p>
+    <p>Note: please open on a desktop or laptop, the viewer does not work on mobile.</p>
+  </div>
+
+  <h2>2. Simulated fresh-wave email — unknown domain, same pattern (should be flagged)</h2>
+  <div class="msg pg-test-message" id="freshwave">
+    <p>Dr Smith has shared a file with you.</p>
+    <p><a href="https://kelvora.vu/access/">View shared documents</a></p>
+    <p>Best opened on your computer.</p>
+  </div>
+
+  <h2>2b. Replica of the real "V Care Dental" email (should be flagged)</h2>
+  <div class="msg pg-test-message" id="vcare">
+    <h3>V Care Dental shared a file with you</h3>
+    <p><b>V Care Dental</b> shared <b>" V CARE DENTAL ACKNOWLEDGEMENT DOC"</b> with you.</p>
+    <p>For security reasons, please view this document using your <b>Desktop or Windows Laptop.</b></p>
+    <p><a href="https://docsecdental.vu/mesh">V CARE DENTAL ACKNOWLEDGMENT.DOCX</a></p>
+    <p><a href="https://docsecdental.vu/mesh">Open Document</a></p>
+    <p>Microsoft logo <a href="https://clientesetupdoc.vu/access">Privacy Statement</a></p>
+  </div>
+
+  <h2>2c. Evasion wave — attacker moves off .vu to a .com (should still be flagged)</h2>
+  <div class="msg pg-test-message" id="evasion">
+    <p>Dr Jones has shared a folder with you.</p>
+    <p><a href="https://secureportaldocs.com/view">Open shared documents</a></p>
+    <p>Please view on your desktop or laptop.</p>
+  </div>
+
+  <h2>3. Legitimate share email (should NOT be flagged)</h2>
+  <div class="msg pg-test-message" id="good">
+    <p>Hi, I have shared a folder with you on OneDrive.</p>
+    <p><a href="https://1drv.ms/f/s!AbCdEf">Open in OneDrive</a></p>
+  </div>
+
+  <h2>4. Ordinary email (should NOT be flagged)</h2>
+  <div class="msg pg-test-message" id="plain">
+    <p>Hi team, reminder that the staff meeting is at 1pm Thursday. Agenda attached.</p>
+  </div>
+
+  <script src="rules.js"></script>
+  <script src="content.js"></script>
+  <script>
+    // Report results for automated checking.
+    setTimeout(() => {
+      const out = {};
+      for (const id of ["bad", "freshwave", "vcare", "evasion", "good", "plain"]) {
+        const el = document.getElementById(id);
+        out[id] = {
+          flagged: !!(el.previousElementSibling && el.previousElementSibling.classList.contains("pg-banner")),
+          ...window.__pgAnalyzeMessage(el)
+        };
+      }
+      window.__pgResults = out;
+      console.log("PG_RESULTS " + JSON.stringify(out));
+    }, 600);
+  </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT Setup Guide — protect a dental practice from the folder-share phishing campaign</title>
+<style>
+  :root { --red: #b71c1c; --dark: #1a1a2e; --grey: #555; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; color: #222; line-height: 1.55; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 20px 60px; }
+  header { background: var(--dark); color: #fff; padding: 26px 0; }
+  header h1 { margin: 0; font-size: 24px; }
+  header p { margin: 6px 0 0; opacity: .9; font-size: 15px; }
+  h2 { color: var(--dark); margin: 38px 0 10px; font-size: 21px; border-bottom: 3px solid var(--red); padding-bottom: 6px; }
+  h3 { margin: 22px 0 8px; font-size: 16px; color: var(--red); }
+  pre { background: #1e1e2e; color: #e8e8f0; padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: #f0f0f4; padding: 1px 5px; border-radius: 4px; font-size: 90%; }
+  pre code { background: none; padding: 0; }
+  .who { background: #eef3fb; border: 1px solid #bcd; border-radius: 8px; padding: 10px 16px; font-size: 14px; margin: 8px 0 14px; }
+  .warn { background: #fff8e1; border: 1px solid #e6c860; border-radius: 8px; padding: 10px 16px; font-size: 14px; margin: 12px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 10px 0; }
+  th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f7f7f7; }
+  a { color: var(--red); }
+  ol li, ul li { margin: 5px 0; }
+</style>
+</head>
+<body>
+<header><div class="wrap" style="padding-bottom:0">
+  <h1>IT Setup Guide — stopping the folder-share phishing campaign</h1>
+  <p>Copy-paste recipes for practice IT providers. Each layer is independent — do as many as apply. Layers 1–3 protect every device including the Outlook desktop app and phones; no browser extension needed.</p>
+</div></header>
+<div class="wrap">
+
+  <h2>Coverage map — what protects what</h2>
+  <table>
+    <tr><th>Layer</th><th>Protects</th><th>Effort</th></tr>
+    <tr><td><b>1. Mail server rule</b> (M365 / Google Workspace)</td><td>Every device and mail client, all staff — email is tagged/quarantined before delivery</td><td>15 min, admin access</td></tr>
+    <tr><td><b>2. DNS filtering</b> at the router</td><td>Every device on the practice network, every browser and app — the malicious site simply won't load</td><td>15 min, router access</td></tr>
+    <tr><td><b>3. Account & endpoint hardening</b> (2FA, non-admin, app control)</td><td>Makes a click survivable and stops mailbox takeover</td><td>an afternoon</td></tr>
+    <tr><td><b>4. Browser extension</b> (Chrome / Edge / Firefox)</td><td>Visible red warning inside Gmail / Outlook web</td><td>2 min per PC</td></tr>
+    <tr><td><b>5. Poster + staff training</b></td><td>Every human, including desktop-Outlook and phone readers no software reaches</td><td>15-min team meeting</td></tr>
+  </table>
+
+  <h2>1a. Microsoft 365 — mail flow rules (covers desktop Outlook)</h2>
+  <div class="who">For practices on Microsoft 365 / Exchange Online — i.e. most practices using the Outlook desktop app. Needs a tenant admin.</div>
+
+  <h3>Admin center (point-and-click)</h3>
+  <ol>
+    <li>Go to <a href="https://admin.exchange.microsoft.com" rel="noopener">admin.exchange.microsoft.com</a> → <b>Mail flow → Rules → Add a rule → Create a new rule</b>.</li>
+    <li><b>Rule 1 — quarantine known-bad links:</b> Apply if <i>"The subject or body → subject or body includes any of these words"</i> → add: <code>.vu/</code> — Do the following: <i>"Redirect the message to → hosted quarantine"</i>. Severity: High.</li>
+    <li><b>Rule 2 — warn on share-lure wording from outside:</b> Apply if <i>"The sender → is external/internal → Outside the organization"</i> AND <i>"subject or body includes"</i>: <code>shared a file with you</code>, <code>shared a folder with you</code>, <code>shared a file for you</code> — Do the following: <i>"Apply a disclaimer → prepend"</i> with the HTML below. This tags the email with a red warning banner that shows in EVERY client, including desktop Outlook and phones.</li>
+  </ol>
+  <pre><code>&lt;div style="background:#fdecea;border:3px solid #b71c1c;padding:12px;font-family:Arial;font-size:14px"&gt;
+&lt;b style="color:#b71c1c;font-size:16px"&gt;⚠️ CAUTION — "shared file" email from outside the practice&lt;/b&gt;&lt;br&gt;
+A phishing campaign is hitting Australian dental clinics with fake "shared a file" emails sent
+from hacked colleagues' real accounts. Before opening any link: PHONE the sender and confirm
+they sent it. Never open share links "on your desktop" because the email says to.
+&lt;/div&gt;</code></pre>
+
+  <h3>PowerShell (equivalent, for IT providers)</h3>
+  <pre><code>Connect-ExchangeOnline
+
+New-TransportRule -Name "PhishWatch 1 - quarantine .vu links" `
+  -SubjectOrBodyContainsWords ".vu/" `
+  -Quarantine $true -SetAuditSeverity High
+
+New-TransportRule -Name "PhishWatch 2 - external share-lure warning" `
+  -FromScope NotInOrganization `
+  -SubjectOrBodyContainsWords "shared a file with you","shared a folder with you","shared a file for you" `
+  -ApplyHtmlDisclaimerLocation Prepend `
+  -ApplyHtmlDisclaimerText '&lt;div style="background:#fdecea;border:3px solid #b71c1c;padding:12px;font-family:Arial;font-size:14px"&gt;&lt;b style="color:#b71c1c;font-size:16px"&gt;⚠️ CAUTION — "shared file" email from outside the practice&lt;/b&gt;&lt;br&gt;A phishing campaign is hitting Australian dental clinics with fake "shared a file" emails sent from hacked colleagues&#39; real accounts. Before opening any link: PHONE the sender and confirm they sent it.&lt;/div&gt;' `
+  -ApplyHtmlDisclaimerFallbackAction Wrap</code></pre>
+  <p>Also worth enabling if licensed (Defender for Office 365): <b>Safe Links</b> with "apply real-time URL scanning". Update Rule 1's word list as new attack domains appear.</p>
+
+  <h2>1b. Google Workspace — content compliance</h2>
+  <div class="who">For practices whose email runs on Google Workspace (Gmail with your own domain). Needs super-admin.</div>
+  <ol>
+    <li><a href="https://admin.google.com" rel="noopener">admin.google.com</a> → <b>Apps → Google Workspace → Gmail → Compliance</b>.</li>
+    <li>Under <b>Content compliance</b> → Configure. Affect: <b>Inbound</b>.</li>
+    <li>Add expression: <i>"Simple content match"</i> → <code>.vu/</code> (add more as new patterns appear).</li>
+    <li>Action: <b>Quarantine message</b> (review quarantines in Admin console) — or "Modify message → Prepend custom subject" with <code>[SUSPECTED PHISHING]</code> if you prefer tagging over holding.</li>
+  </ol>
+  <div class="warn">Plain @gmail.com practice accounts can't do server-side rules. For those: the browser extension + poster, plus the DNS layer below, and strongly consider moving practice email onto Workspace or M365 — server-side control is worth it.</div>
+
+  <h2>2. DNS filtering at the router — protects every device, every browser, every app</h2>
+  <div class="who">Works no matter what email client or browser anyone uses: even if someone clicks, the malicious site fails to load on the practice network. One change on the router.</div>
+  <h3>Option A — Quad9 (free, zero accounts)</h3>
+  <p>Router admin page → DNS settings → set DNS servers to <code>9.9.9.9</code> and <code>149.112.112.112</code>. Quad9 blocks domains on threat-intelligence lists automatically (including reported campaign domains once flagged — another reason to report sightings).</p>
+  <h3>Option B — NextDNS (free tier, more control)</h3>
+  <ol>
+    <li>Create a config at <a href="https://nextdns.io" rel="noopener">nextdns.io</a>; point the router's DNS at the two addresses it gives you.</li>
+    <li>In <b>Denylist</b>, add <code>vu</code> — this blocks the <i>entire .vu domain ending</i> on your network. Legitimate business email from .vu sites is essentially nonexistent in Australian dentistry, so the collateral damage is nil, and every future wave on .vu is dead on arrival regardless of the specific domain.</li>
+    <li>Add other risky endings as waves appear (<code>icu</code>, <code>top</code>, <code>cyou</code>…), and enable "Threat Intelligence Feeds" + "AI-Driven Threat Detection" in Security settings.</li>
+  </ol>
+
+  <h2>3. Account and endpoint hardening (makes a click survivable)</h2>
+  <ul>
+    <li><b>2FA/MFA enforced on every mailbox</b> — M365: Entra → Security defaults ON (or Conditional Access). Workspace: Admin → Security → 2-step verification → Enforce. The single control that stops your practice becoming the next sender.</li>
+    <li><b>Staff log in as standard Windows users, never Administrator</b> — blocks software installation, which blocks most of these payloads.</li>
+    <li><b>Application control:</b> Windows 11 Smart App Control, or AppLocker/WDAC policy on Pro — unknown executables simply don't run.</li>
+    <li><b>Defender ASR rules</b> (free, built-in — via Intune or GPO): enable at least "Block executable files from running unless they meet a prevalence, age, or trusted list criterion", "Block JavaScript/VBScript from launching downloaded executable content", "Block execution of potentially obfuscated scripts".</li>
+    <li><b>Browser policy:</b> disable password saving on shared practice machines (Chrome/Edge enterprise policy <code>PasswordManagerEnabled = false</code>); use a proper password manager instead.</li>
+    <li><b>Backups</b> that practice PCs can't overwrite (offline or cloud with versioning). Test a restore.</li>
+  </ul>
+
+  <h2>4. Browser extension (Chrome, Edge, Firefox)</h2>
+  <ul>
+    <li><b>Chrome:</b> <code>chrome://extensions</code> → Developer mode → Load unpacked → the <code>extension</code> folder (or unzip the download).</li>
+    <li><b>Edge:</b> identical at <code>edge://extensions</code> — Edge runs Chrome extensions natively.</li>
+    <li><b>Firefox:</b> use the Firefox build (<code>extension-firefox</code> zip): <code>about:debugging#/runtime/this-firefox</code> → "Load Temporary Add-on" → pick <code>manifest.json</code>. Note Firefox unloads temporary add-ons on restart — for permanent install the add-on needs signing via addons.mozilla.org (free), worth doing if Firefox practices adopt it. Also approve the site-access prompt (Firefox asks per-site for MV3 extensions).</li>
+    <li><b>Safari:</b> not supported (requires a paid Apple developer conversion) — Mac users: use Chrome/Edge/Firefox for webmail, and rely on layers 1–3.</li>
+  </ul>
+
+  <h2>5. Humans (the layer nothing can replace)</h2>
+  <p>Print the <a href="downloads/DO-NOT-OPEN-Poster.pdf">DO NOT OPEN poster</a> for the front desk, run the <a href="downloads/Staff-Training-Booklet-v2.docx">staff booklet</a> as a 15-minute team meeting, and establish the one rule that defeats every future variant: <b>unexpected share link → phone the sender before clicking.</b></p>
+
+</div>
+</body>
+</html>

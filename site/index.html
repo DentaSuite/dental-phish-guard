@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dental Phish Watch — active email attack on Australian dental practices</title>
+<style>
+  :root { --red: #b71c1c; --dark: #1a1a2e; --grey: #555; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; color: #222; line-height: 1.55; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header { background: var(--red); color: #fff; padding: 36px 0 30px; }
+  header h1 { margin: 0 0 10px; font-size: 30px; }
+  header p { margin: 0; font-size: 17px; opacity: .95; max-width: 700px; }
+  h2 { color: var(--dark); margin: 40px 0 12px; font-size: 22px; border-bottom: 3px solid var(--red); padding-bottom: 6px; }
+  .tldr { background: #fdecea; border: 2px solid var(--red); border-radius: 10px; padding: 18px 22px; margin-top: 28px; }
+  .tldr li { margin: 6px 0; }
+  .cols { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+  .cols > div { flex: 1 1 320px; }
+  img.example { max-width: 100%; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 3px 12px rgba(0,0,0,.12); }
+  .caption { font-size: 13px; color: var(--grey); font-style: italic; margin-top: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; }
+  th { background: #f7f7f7; }
+  .dom { color: var(--red); font-weight: 600; font-family: ui-monospace, monospace; }
+  .note { font-size: 13px; color: var(--grey); }
+  form { background: #f7f8fa; border: 1px solid #ddd; border-radius: 10px; padding: 22px; }
+  label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 4px; }
+  input, textarea, select { width: 100%; padding: 9px 10px; border: 1px solid #bbb; border-radius: 6px; font: inherit; font-size: 14px; }
+  textarea { min-height: 90px; }
+  button { margin-top: 18px; background: var(--red); color: #fff; border: 0; border-radius: 8px; padding: 12px 26px; font-size: 16px; font-weight: 600; cursor: pointer; }
+  button:hover { background: #911313; }
+  .privacy { background: #fff8e1; border: 1px solid #e6c860; border-radius: 8px; padding: 12px 16px; font-size: 13px; margin: 16px 0; }
+  ol li, ul li { margin: 5px 0; }
+  footer { margin-top: 50px; padding: 24px 0 40px; background: #f2f2f2; font-size: 13px; color: var(--grey); }
+  footer a { color: var(--red); }
+  .steps { background: #eef7f0; border: 1px solid #b9dcc0; border-radius: 10px; padding: 16px 22px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>⚠️ Dental Phish Watch</h1>
+    <p>An active phishing campaign is spreading clinic-to-clinic through Australian dentistry — sent from the <b>real email accounts of hacked colleagues</b>. This page shows you the pattern, collects sightings so affected clinics can be warned, and tells you what to do if you clicked.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="tldr">
+    <b>TL;DR</b>
+    <ul>
+      <li>Email from a real colleague: <b>"[Clinic name] shared a file with you"</b>, styled like Microsoft/OneDrive, asking you to open it <b>on a desktop or laptop</b> — that instruction is the giveaway.</li>
+      <li>Link goes to a made-up domain ending in <b>.vu</b>. A new domain is used every wave. Often arrives at 3–6am (overseas attackers).</li>
+      <li>Clicking installs remote-control malware behind a fake "Windows Update" screen. Wipe-and-reinstall territory, not antivirus territory.</li>
+      <li><b>Verify by phone before opening any share link — even from someone you trust.</b> Never verify by email reply: the hacker answers it.</li>
+    </ul>
+  </div>
+
+  <h2>What the email looks like</h2>
+  <div class="cols">
+    <div>
+      <img class="example" src="email-example.png" alt="Example phishing email: fake Microsoft file-share card titled 'Dental Clinic Name shared a file with you' with an Open Document button">
+      <div class="caption">A real email from this campaign (July 2026), clinic name anonymised. Every wave looks nearly identical — same fake Microsoft card, same "Open Document" button, same "Desktop or Windows Laptop" line. Only the clinic name and link change.</div>
+    </div>
+    <div>
+      <b>Red flags — any ONE of these means stop and phone the sender:</b>
+      <ul>
+        <li>"Shared a file/folder with you" — especially unexpected</li>
+        <li>Link domain you don't recognise, or ending in <b>.vu</b></li>
+        <li>"Please open on your desktop / Windows laptop"</li>
+        <li>Link only, no attachment; vague wording</li>
+        <li>BCC'd / "undisclosed recipients"; not addressed by name</li>
+        <li>Arrived at a strange hour (e.g. 3am)</li>
+      </ul>
+      <b>Domains seen so far (do not visit):</b>
+      <table>
+        <tr><th>Domain</th><th>Wave</th></tr>
+        <tr><td class="dom">avernix&#8203;.vu/access</td><td>early wave</td></tr>
+        <tr><td class="dom">uvanv&#8203;.vu</td><td>early wave</td></tr>
+        <tr><td class="dom">xornavo&#8203;.vu/file</td><td>12 Jul 2026</td></tr>
+        <tr><td class="dom">lornica&#8203;.vu/dental</td><td>16 Jul 2026</td></tr>
+        <tr><td class="dom">clientesetupdoc&#8203;.vu/access</td><td>22 Jul 2026</td></tr>
+        <tr><td class="dom">docsecdental&#8203;.vu/mesh</td><td>22 Jul 2026</td></tr>
+      </table>
+      <p class="note">Link scanners show these as "clean" — the kit shows scanners a harmless decoy page. A clean scan means nothing.</p>
+    </div>
+  </div>
+
+  <h2>Report a sighting</h2>
+  <p>Received one of these? Reporting it helps two ways: the sender clinic (whose account is hacked and probably doesn't know) gets warned by phone, and new attack domains get added to the block lists and reported for takedown. Reports are reviewed by a person — nothing is published automatically, and the affected clinic is never named publicly.</p>
+  <div class="privacy">🔒 <b>Privacy:</b> your report goes only to the site operator for the purpose of warning the affected clinic and reporting the attack infrastructure. Don't paste patient information into this form.</div>
+  <form id="reportForm">
+    <label for="rName">Your name</label>
+    <input id="rName" required>
+    <label for="rPractice">Your practice</label>
+    <input id="rPractice" required>
+    <label for="rContact">Your email or phone (in case follow-up is needed)</label>
+    <input id="rContact" required>
+    <label for="rSender">Sender shown on the phishing email (clinic name and email address)</label>
+    <input id="rSender" placeholder="e.g. Example Dental <reception@exampledental.com.au>" required>
+    <label for="rDomain">Link address in the email (do NOT click it — hover/long-press to read it, or type what it showed)</label>
+    <input id="rDomain" placeholder="e.g. somename.vu/access">
+    <label for="rWhen">When did it arrive? (date and time — early-morning timestamps are useful evidence)</label>
+    <input id="rWhen" placeholder="e.g. 23 July 2026, 3:41am">
+    <label for="rClicked">Did anyone click the link?</label>
+    <select id="rClicked">
+      <option>No</option>
+      <option>Yes — link opened only</option>
+      <option>Yes — something downloaded or a "Windows Update" screen appeared</option>
+      <option>Not sure</option>
+    </select>
+    <label for="rNotes">Anything else (subject line, wording, etc.)</label>
+    <textarea id="rNotes"></textarea>
+    <button type="submit">Send report</button>
+    <p class="note">Submitting opens a pre-filled email in your own mail program — you can review exactly what is sent before hitting send. If possible, also attach the original email (in Gmail: ⋮ menu → "Download message").</p>
+  </form>
+
+  <h2>Free protection kit — download and share</h2>
+  <ul>
+    <li><a href="downloads/DO-NOT-OPEN-Poster.pdf" download><b>DO NOT OPEN poster (PDF)</b></a> — print it and pin it wherever email is checked.</li>
+    <li><a href="downloads/Staff-Training-Booklet-v2.docx" download><b>Staff training booklet (Word)</b></a> — run it as a 15-minute team meeting; add your practice name.</li>
+    <li><a href="downloads/dental-phish-guard-extension.zip" download><b>Dental Phish Guard browser extension — Chrome &amp; Edge (zip)</b></a> — flags these emails in Gmail/Outlook web with a red warning banner. Unzip, then <code>chrome://extensions</code> (or <code>edge://extensions</code>) → enable Developer mode → "Load unpacked" → select the folder. The extension also (optionally — there's an off switch) reports detections to this site's coordinator so hacked clinics get a warning phone call; it sends the sender address and attack domains only, never your email contents.</li>
+    <li><a href="downloads/dental-phish-guard-firefox.zip" download><b>Firefox build (zip)</b></a> — same extension for Firefox (see the IT guide for install steps).</li>
+    <li><a href="it-guide.html"><b>IT setup guide</b></a> — copy-paste recipes for your IT provider: Microsoft 365 / Google Workspace mail rules (protects the Outlook desktop app and every phone), router DNS filtering that blocks these sites on every device, and the endpoint hardening checklist.</li>
+  </ul>
+
+  <h2>If someone clicked — do this now</h2>
+  <div class="steps">
+    <ol>
+      <li><b>Unplug that PC from the network / Wi-Fi immediately</b> and stop using it.</li>
+      <li><b>Wipe and reinstall Windows</b> on it. With a live attacker involved, antivirus "cleaning" cannot be trusted.</li>
+      <li>From a <b>different clean device</b>: change the email password, enable two-factor authentication, sign out all sessions.</li>
+      <li>Check mail settings for <b>forwarding rules and filters you didn't create</b>; confirm recovery email/phone unchanged; review connected apps.</li>
+      <li>Assume all browser-saved passwords on that PC are stolen — <b>change them all, banking first</b> (then Medicare/PRODA, HICAPS, practice software, suppliers). Call the bank if card details were saved.</li>
+      <li><b>Warn your contacts</b> — your account will be used to attack them next.</li>
+      <li>Patient data possibly accessed? Call your <b>indemnity provider</b> — the Notifiable Data Breaches scheme (OAIC) may apply.</li>
+      <li>Report at <a href="https://www.cyber.gov.au/report" rel="noopener">cyber.gov.au/report</a> and check practice bank accounts / recent invoices for tampering.</li>
+    </ol>
+  </div>
+
+  <h2>Protect your practice (one afternoon of IT work)</h2>
+  <ul>
+    <li><b>2FA on every mailbox, enforced</b> — the single control that stops your account becoming the next launchpad.</li>
+    <li><b>Staff on standard (non-admin) Windows accounts</b> — blocks software installs, which blocks most of these payloads.</li>
+    <li>Application control (Smart App Control / AppLocker) + Microsoft Defender ASR rules.</li>
+    <li>DNS filtering at the router (e.g. Quad9 <span class="dom">9.9.9.9</span>); a mail rule quarantining links to risky endings like .vu.</li>
+    <li>Tested backups that practice PCs can't overwrite.</li>
+    <li><b>Referrers &amp; labs:</b> send documents as attachments or via clinical messaging platforms (Medical-Objects/HealthLink) — never "download from my site" links. Make the scam pattern stand out by convention.</li>
+  </ul>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Run by a dental practice that was hit by this attack, for the profession. Affected clinics are contacted privately and never named here.<br>
+    Official reporting: <a href="https://www.cyber.gov.au/report" rel="noopener">ACSC ReportCyber</a> ·
+    <a href="https://www.scamwatch.gov.au" rel="noopener">Scamwatch</a> ·
+    <a href="https://www.oaic.gov.au" rel="noopener">OAIC (data breaches)</a> ·
+    <a href="https://safebrowsing.google.com/safebrowsing/report_phish/" rel="noopener">Report a phishing URL to Google</a><br>
+    This site gives general security guidance, not legal advice.
+  </div>
+</footer>
+
+<script>
+  // Reports open a pre-filled email in the reporter's own mail client, so they see
+  // and control exactly what is sent. Set the operator address here:
+  const REPORT_EMAIL = "info@parkrddental.com.au";
+
+  document.getElementById("reportForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = (id) => document.getElementById(id).value.trim();
+    const body = [
+      "PHISHING SIGHTING REPORT (Dental Phish Watch)",
+      "",
+      "Reporter: " + v("rName") + " — " + v("rPractice"),
+      "Contact: " + v("rContact"),
+      "",
+      "Phishing email sender (likely compromised account): " + v("rSender"),
+      "Link/domain in email: " + v("rDomain"),
+      "Received: " + v("rWhen"),
+      "Clicked? " + v("rClicked"),
+      "",
+      "Notes: " + v("rNotes"),
+      "",
+      "(If possible, attach the original email to this message — in Gmail: three-dot menu > Download message.)"
+    ].join("\n");
+    location.href = "mailto:" + REPORT_EMAIL +
+      "?subject=" + encodeURIComponent("Phishing sighting: " + v("rSender")) +
+      "&body=" + encodeURIComponent(body);
+  });
+</script>
+
+</body>
+</html>
