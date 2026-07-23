@@ -6,6 +6,17 @@
 const PHISHWATCH_URL = "https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_reports";
 const PHISHWATCH_KEY = "sb_publishable_tQ22oNC5oYZ6r_dhLJhK3Q_XPDnfucA";
 
+// One anonymous install ping so the coordinator can see adoption. No identity,
+// no email data — just "an install happened".
+chrome.runtime.onInstalled.addListener((d) => {
+  if (d.reason !== "install") return;
+  fetch("https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_events", {
+    method: "POST",
+    headers: { apikey: PHISHWATCH_KEY, "content-type": "application/json", prefer: "return=minimal" },
+    body: JSON.stringify({ kind: "extension_install", detail: "chrome" })
+  }).catch(() => {});
+});
+
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg?.type !== "pg-report") return;
   chrome.storage.local.get({ centralReporting: true, reportedKeys: {} }, (d) => {

@@ -409,6 +409,15 @@
     })
     .catch(() => { document.querySelector(".fig-caption").textContent = "Fig. 2 — Live figures temporarily unavailable."; });
 
+  // Anonymous usage counters (counts only — no identities, no answers).
+  const pgEvent = (kind, detail) => fetch("https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_events", {
+    method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json", prefer: "return=minimal" },
+    body: JSON.stringify({ kind, detail })
+  }).catch(() => {});
+  pgEvent("page_view", location.pathname);
+  document.querySelectorAll("a[download]").forEach((a) =>
+    a.addEventListener("click", () => pgEvent("download", a.getAttribute("href").split("/").pop())));
+
   // Same-origin iframe: grow the embedded triage to fit its content.
   const tf = document.getElementById("triageFrame");
   setInterval(() => {

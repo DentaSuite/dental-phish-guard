@@ -65,7 +65,7 @@
 
 <div class="wrap">
   <h1>What should I do?</h1>
-  <p class="intro">Answer a few questions about your situation and get a checklist written for it. Nothing you answer here is recorded or sent anywhere — this runs entirely in your browser.</p>
+  <p class="intro">Answer a few questions about your situation and get a checklist written for it. Your answers are never recorded or sent anywhere — the site only counts that the tool was used.</p>
   <div class="crumbs" id="crumbs"></div>
   <div id="stage"></div>
 </div>
@@ -238,6 +238,18 @@ if (location.search.includes("embed")) {
   document.body.style.background = "transparent";
 }
 
+// Anonymous use-counter: fires once when the first question is answered.
+// Records only THAT the tool was used — never which answers were chosen.
+let counted = false;
+const pgCount = () => {
+  if (counted) return; counted = true;
+  fetch("https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_events", {
+    method: "POST",
+    headers: { apikey: "sb_publishable_tQ22oNC5oYZ6r_dhLJhK3Q_XPDnfucA", "content-type": "application/json", prefer: "return=minimal" },
+    body: JSON.stringify({ kind: "triage_start", detail: location.search.includes("embed") ? "embedded" : "standalone" })
+  }).catch(() => {});
+};
+
 let path = [];
 // Deep link: triage.html#out_infected opens that checklist directly.
 const hash = location.hash.replace("#", "");
@@ -261,6 +273,7 @@ function render() {
     </div>`;
     stage.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
       const o = TREE[key].opts[+b.dataset.i];
+      pgCount();
       path.push({ label: o.t, next: o.next });
       render();
     }));
