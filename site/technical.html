@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Technical analysis — Dental Phish Watch DPW-2026-001</title>
+<meta name="description" content="Technical analysis of the phishing campaign targeting Australian dental practices: delivery chain, header evidence, infrastructure patterns, detection heuristics, and open questions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#FFFFFF; --tint:#F5F6F8; --ink:#1A1D21; --muted:#5A6470; --alert:#B01823; --alert-wash:#FBEFF0; --line:#D6DBE1; --line-soft:#E7EAEE; --mono:"IBM Plex Mono",ui-monospace,monospace; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:15.5px/1.65 "IBM Plex Sans",system-ui,sans-serif; }
+  .wrap { max-width:880px; margin:0 auto; padding:0 22px; }
+  a { color:var(--ink); text-decoration-color:#9AA4AF; text-underline-offset:2px; }
+  a:hover { text-decoration-color:var(--ink); }
+  code, .m { font-family:var(--mono); font-size:88%; background:var(--tint); border:1px solid var(--line-soft); padding:1px 5px; border-radius:3px; }
+  pre { font-family:var(--mono); font-size:12.5px; line-height:1.55; background:#1E1E24; color:#E7E9EE; border-radius:5px; padding:14px 16px; overflow-x:auto; }
+  .masthead { border-bottom:3px solid var(--ink); }
+  .masthead .wrap { display:flex; align-items:baseline; gap:16px; padding:18px 22px 14px; flex-wrap:wrap; }
+  .masthead .org { font-family:var(--mono); font-weight:500; font-size:14px; letter-spacing:.08em; }
+  .masthead .org a { text-decoration:none; }
+  .masthead .role { font-size:13px; color:var(--muted); }
+  .masthead .adv { margin-left:auto; font-family:var(--mono); font-size:12.5px; color:var(--muted); }
+  h1 { font-size:26px; line-height:1.3; font-weight:700; margin:32px 0 10px; }
+  .sub { color:var(--muted); margin:0 0 26px; max-width:72ch; }
+  h2 { font-size:19px; font-weight:700; margin:38px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line); }
+  h2 .no { font-family:var(--mono); font-weight:500; color:var(--muted); margin-right:10px; font-size:15px; }
+  h3 { font-size:15.5px; font-weight:600; margin:20px 0 8px; }
+  p, li { max-width:76ch; }
+  p { margin:0 0 13px; }
+  li { margin:4px 0; }
+  .muted { color:var(--muted); font-size:13.5px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; margin:14px 0; }
+  th, td { text-align:left; padding:7px 11px; border:1px solid var(--line-soft); vertical-align:top; }
+  th { font-family:var(--mono); font-weight:500; font-size:11.5px; color:var(--muted); background:var(--tint); white-space:nowrap; }
+  td.m2 { font-family:var(--mono); font-size:12.5px; }
+  .notice { background:var(--alert-wash); border:1px solid #E4C2C5; border-left:3px solid var(--alert); padding:12px 16px; margin:16px 0; font-size:14.5px; max-width:none; }
+  .chain { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin:16px 0; }
+  .chain .stage { flex:1 1 150px; border:1px solid var(--line); border-radius:5px; padding:10px 12px; font-size:13px; }
+  .chain .stage b { display:block; font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--alert); margin-bottom:4px; }
+  form { border:1px solid var(--line); border-radius:4px; padding:22px; margin:18px 0; background:var(--tint); max-width:640px; }
+  label { display:block; font-weight:600; font-size:13.5px; margin:14px 0 4px; }
+  input, textarea, select { width:100%; padding:9px 11px; border:1px solid #B4BCC5; border-radius:3px; font:inherit; font-size:14px; background:#fff; }
+  textarea { min-height:110px; }
+  .submit { margin-top:18px; background:var(--ink); color:#fff; border:0; border-radius:3px; padding:11px 22px; font:600 14.5px "IBM Plex Sans",sans-serif; cursor:pointer; }
+  .submit:hover { background:#000; }
+  footer { margin-top:56px; border-top:3px solid var(--ink); padding:22px 0 46px; font-size:13.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="org"><a href="index.html">DENTAL PHISH WATCH</a></span>
+    <span class="role">Technical analysis — for IT providers and security researchers</span>
+    <span class="adv">DPW-2026-001-T</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h1>Technical analysis of the campaign</h1>
+  <p class="sub">What we have established from message evidence and a victim-side incident, what we infer, and what we still need. Written for the IT providers and security people who look after dental practices. The plain-language advisory is at <a href="index.html">the main page</a>; this page assumes technical background. Corrections and additional intelligence are welcome via the form below.</p>
+
+  <h2><span class="no">1</span>Attack chain</h2>
+  <div class="chain">
+    <div class="stage"><b>ACCESS</b>Compromise of a dental practice mailbox (both consumer Gmail and custom-domain business mailboxes observed)</div>
+    <div class="stage"><b>DISTRIBUTION</b>Share-lure email sent from the genuine account to its correspondents, BCC to undisclosed recipients</div>
+    <div class="stage"><b>DELIVERY</b>Freshly registered .vu domain, short generic path, cloaked against scanners</div>
+    <div class="stage"><b>EXECUTION</b>Windows payload; fake full-screen "Windows Update" overlay during install</div>
+    <div class="stage"><b>OPERATION</b>Interactive hands-on-keyboard remote access; repeat visits weeks apart</div>
+    <div class="stage"><b>PROPAGATION</b>Victim's address book becomes the next distribution list</div>
+  </div>
+  <p>The propagation model is what makes this campaign effective in a niche sector: every message arrives from a genuine, previously-corresponding address, so SPF, DKIM and DMARC all pass and reputation-based filtering is useless. Targeting requires no attacker knowledge of the industry — the compromised mailbox's own contact graph is the targeting.</p>
+
+  <h2><span class="no">2</span>Message evidence</h2>
+  <p>We hold original .eml files from three waves (12, 16 and 22 July 2026) plus a first-wave sample. Key observations from headers and bodies:</p>
+  <h3>Authentication and origin</h3>
+  <ul>
+    <li>All observed messages fully pass SPF, DKIM and DMARC for their sending domain. The 22 July sample sent from a compromised consumer Gmail account carries a valid <span class="m">d=gmail.com</span> DKIM signature and a <span class="m">Message-ID</span> of the form <span class="m">&lt;…@mail.gmail.com&gt;</span> — i.e. sent through a genuine authenticated Gmail session, not spoofed and not via third-party SMTP. This is account takeover, not header forgery.</li>
+    <li>Compromised senders include both consumer Gmail addresses and custom-domain business mailboxes; the business-domain sample also transited Google infrastructure (Workspace-hosted).</li>
+    <li>Recipients are always concealed: <span class="m">To: undisclosed-recipients:;</span> with the actual recipient in <span class="m">Bcc</span>.</li>
+    <li>Send times cluster outside AEST business hours; two samples landed 03:41 and 06:32 local. Consistent with a UTC+0…+3-ish operator working their daytime, though not probative.</li>
+  </ul>
+  <h3>Lure construction</h3>
+  <ul>
+    <li>HTML body imitates a Microsoft OneDrive/SharePoint share card: share icon, "[Practice] shared a file with you" heading, a named ".DOCX" file row, an "Open Document" button, Microsoft logo (embedded inline as base64 <span class="m">cid:</span> images) and a "Privacy Statement" link.</li>
+    <li>The .docx file-type icon in one sample is hot-linked from Wikimedia Commons — a small but recurring fingerprint.</li>
+    <li>The instruction "For security reasons, please view this document using your Desktop or Windows Laptop" appears consistently — the payload is Windows-only and the operators are filtering out mobile clicks.</li>
+    <li>One sample uses two distinct fresh domains in a single message (payload link vs. decoy "privacy statement" link), suggesting templated kit generation rather than hand-built mails.</li>
+    <li>The compromised account's genuine signature block (address, phone) is retained beneath the lure — the operators send from the real mailbox UI or preserve its formatting deliberately.</li>
+  </ul>
+
+  <h2><span class="no">3</span>Infrastructure</h2>
+  <table>
+    <tr><th>DOMAIN (defanged)</th><th>PATH</th><th>FIRST SEEN</th><th>SENDER TYPE</th></tr>
+    <tr><td class="m2">avernix[.]vu</td><td class="m2">/access</td><td>early wave</td><td>consumer Gmail</td></tr>
+    <tr><td class="m2">uvanv[.]vu</td><td class="m2">—</td><td>early wave</td><td>—</td></tr>
+    <tr><td class="m2">xornavo[.]vu</td><td class="m2">/file</td><td>12 Jul 2026</td><td>business mailbox (custom domain)</td></tr>
+    <tr><td class="m2">lornica[.]vu</td><td class="m2">/dental</td><td>16 Jul 2026</td><td>business mailbox (custom domain)</td></tr>
+    <tr><td class="m2">clientesetupdoc[.]vu</td><td class="m2">/access</td><td>22 Jul 2026</td><td>consumer Gmail (decoy link in same mail)</td></tr>
+    <tr><td class="m2">docsecdental[.]vu</td><td class="m2">/mesh</td><td>22 Jul 2026</td><td>consumer Gmail (payload link)</td></tr>
+  </table>
+  <ul>
+    <li><b>TLD choice:</b> all observed domains use .vu (Vanuatu ccTLD). WHOIS/passive-DNS visibility for .vu is poor, which may be part of the appeal alongside cheap registration. Domain names are pronounceable invented words or vaguely thematic compounds ("docsecdental", "clientesetupdoc"); one fresh registration per wave, discarded after.</li>
+    <li><b>Cloaking:</b> a urlscan.io submission of one live link returned a Wikipedia article as the rendered page — the kit fingerprints scanners/sandboxes and serves a decoy. Treat any "clean" verdict from automated URL scanning as meaningless for this infrastructure. We do not yet know the fingerprinting method (IP reputation, headless detection, UA, or one-time-token links).</li>
+    <li><b>Payload:</b> unrecovered. The one confirmed-infected machine displayed a full-screen fake Windows Update during installation and later showed live cursor control; it was reimaged before forensic capture (lesson learned — see section 5's asks). RAT family, persistence mechanism, and C2 are therefore unknown to us.</li>
+  </ul>
+
+  <h2><span class="no">4</span>Detection</h2>
+  <p>Because domains rotate per wave, our open-source detector (<a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">browser extension, GitHub</a>) scores message content rather than matching indicators alone. Signals, roughly in order of evasion-resistance:</p>
+  <ol>
+    <li>Share-lure phrasing with a link whose registrable domain is not a recognised file-sharing host (works on any TLD);</li>
+    <li>The desktop/Windows-laptop instruction (operationally necessary to them — dropping it costs them victims);</li>
+    <li>Brand mismatch: Microsoft/OneDrive branding with non-Microsoft link targets;</li>
+    <li>High-risk TLD plus short generic path;</li>
+    <li>Known-domain blocklist (zero-FP repeat detection only).</li>
+  </ol>
+  <p>Server-side, the highest-leverage controls are a transport rule quarantining <span class="m">.vu/</span> links (we know of no legitimate .vu correspondence in Australian dentistry), an external-sender share-lure disclaimer rule, and resolver-level blocking of the .vu zone at practice routers. Copy-paste configurations for Microsoft 365 and Google Workspace are in the <a href="it-guide.html">IT configuration guide</a>.</p>
+  <div class="notice"><b>For responders:</b> on any suspected mailbox compromise, audit inbox rules before resetting anything else's passwords — observed BEC tradecraft generally, and hidden forward/move rules specifically, are how operators retain access and conceal replies after a password change fails to evict an authenticated session. Reset password, revoke sessions and app passwords, then check OAuth grants.</div>
+
+  <h2><span class="no">5</span>Open questions — what we need from you</h2>
+  <ul>
+    <li><b>Initial access method.</b> Unconfirmed whether mailbox credentials come from the RAT (browser credential theft on infected machines), from a credential-phishing stage on the same links, or elsewhere. If you've responded to one of these and know, we want to hear it.</li>
+    <li><b>Payload.</b> No sample, hash, family identification or C2 indicators. If you image an infected machine before wiping, or hold EDR telemetry from one, that is the single most valuable contribution possible.</li>
+    <li><b>Cloaking mechanism.</b> Anyone able to capture the real payload flow (residential IP, real browser) alongside the decoy response could characterise the gate.</li>
+    <li><b>Scale.</b> Our numbers are only what's reported to us. Mail-flow logs showing outbound bursts from a compromised practice would size a wave properly.</li>
+    <li><b>Earlier activity.</b> Whether this crew targeted other Australian healthcare verticals before dentistry.</li>
+  </ul>
+  <p>Original .eml samples (with headers) are available to legitimate researchers and responders on request via the form below. Please also report independently to the ACSC — our evidence is already lodged.</p>
+
+  <h2><span class="no">6</span>Contact, ideas and intelligence</h2>
+  <p>Ideas for the tooling, corrections to this analysis, intelligence to share, or anything else — this opens a pre-filled email in your own mail client, so you can attach files (.eml samples, hashes, logs) before sending. Reports of sightings should use the <a href="index.html#reporting">main reporting form</a> instead.</p>
+  <form id="contactForm">
+    <label for="cName">Name</label>
+    <input id="cName" required autocomplete="name">
+    <label for="cOrg">Organisation / role <span class="muted">(optional)</span></label>
+    <input id="cOrg" placeholder="e.g. MSP for 12 dental practices, SOC analyst, researcher">
+    <label for="cContact">Email or phone for reply</label>
+    <input id="cContact" required>
+    <label for="cType">This is…</label>
+    <select id="cType">
+      <option>An idea or suggestion</option>
+      <option>Technical intelligence (indicators, samples, logs)</option>
+      <option>A correction to this analysis</option>
+      <option>A request for the .eml samples (researchers/responders)</option>
+      <option>Media / general contact</option>
+    </select>
+    <label for="cMsg">Message</label>
+    <textarea id="cMsg" required></textarea>
+    <button class="submit" type="submit">Prepare email</button>
+    <p class="muted" style="margin-top:10px">Opens in your own mail application for review before sending. Don't include patient information.</p>
+  </form>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Maintained by an affected Victorian dental practice. Analysis reflects evidence held as at the date on the main advisory; corrections welcome.
+    &nbsp;·&nbsp; <a href="index.html">Main advisory</a> · <a href="it-guide.html">IT guide</a> · <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">Source code</a>
+  </div>
+</footer>
+
+<script>
+  const SB_KEY = "sb_publishable_tQ22oNC5oYZ6r_dhLJhK3Q_XPDnfucA";
+  fetch("https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_events", {
+    method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json", prefer: "return=minimal" },
+    body: JSON.stringify({ kind: "page_view", detail: "/technical.html" })
+  }).catch(() => {});
+
+  const CONTACT_EMAIL = "info@parkrddental.com.au";
+  document.getElementById("contactForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = (id) => document.getElementById(id).value.trim();
+    const body = [
+      "PHISH WATCH CONTACT (technical page)", "",
+      "From: " + v("cName") + (v("cOrg") ? " — " + v("cOrg") : ""),
+      "Reply to: " + v("cContact"),
+      "Type: " + v("cType"), "",
+      v("cMsg")
+    ].join("\n");
+    location.href = "mailto:" + CONTACT_EMAIL +
+      "?subject=" + encodeURIComponent("Phish Watch: " + v("cType").toLowerCase()) +
+      "&body=" + encodeURIComponent(body);
+  });
+</script>
+
+</body>
+</html>
