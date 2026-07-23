@@ -166,6 +166,10 @@
     <h2><span class="no">1</span>Summary</h2>
     <p>An ongoing phishing campaign is propagating between Australian dental practices through compromised email accounts. After gaining access to a clinic's mailbox, the operator sends "shared a file with you" emails to the clinic's correspondents. Because these messages originate from a genuine, previously trusted account, they pass SPF, DKIM and DMARC authentication and are rarely intercepted by spam filtering.</p>
     <p>The linked pages deliver a remote-access trojan for Windows. During installation the malware displays a fake Windows Update screen; an infected machine observed by the issuing practice showed live hands-on-keyboard control by a remote operator. Follow-on activity has included repeat access attempts weeks after initial compromise.</p>
+    <div class="figure">
+      <img src="fake-update-screen.png" alt="Simulated fake Windows Update screen: black background, white text reading Working on updates 37% complete, Don't turn off your computer" style="width:100%;display:block">
+      <div class="fig-caption">Fig. 1a — What to watch for: a reconstruction of the fake "Windows Update" screen reported during infection. If a practice computer shows something like this unexpectedly — particularly just after a "shared file" link was opened, or with the mouse moving on its own — treat it as a live intrusion, not a real update. Simulated for awareness.</div>
+    </div>
     <p>Each recipient practice that is compromised becomes a new distribution point to its own contact network. Compromised senders have been identified in both Victoria (a south-east Melbourne cluster consistent with propagation through local referral relationships) and New South Wales, indicating national reach: any practice that has ever corresponded with an affected clinic may be targeted regardless of state.</p>
     <p>Link-scanning services return benign results for this infrastructure: the kit serves a decoy page to automated scanners. A "clean" URL scan is not evidence of safety for this campaign.</p>
   </div>
@@ -228,7 +232,7 @@
     <p>There are two distinct questions: whether a practice computer is infected, and whether the practice mailbox is compromised and being used to attack others. Either can be true without the other, and a compromised mailbox usually produces no symptoms visible to its owner — most affected practices learn of it only when a colleague telephones to ask about a strange email.</p>
     <h3>Signs a computer is infected</h3>
     <ul>
-      <li>A staff member opened one of these links on a Windows machine, a download ran, or a <b>"Windows Update" screen appeared at an unusual time</b> — treat the machine as compromised regardless of how it behaved afterwards.</li>
+      <li>A staff member opened one of these links on a Windows machine, a download ran, or a <b>"Windows Update" screen appeared at an unusual time</b> (see Fig. 1a in section 1 for what it looks like) — treat the machine as compromised regardless of how it behaved afterwards.</li>
       <li>Cursor movement or windows opening without input; the machine awake or busy when it should be idle.</li>
       <li>Remote-access software the practice did not install — check installed programs and the system tray for tools such as AnyDesk, ScreenConnect/ConnectWise, Atera, RustDesk, or TeamViewer that nobody recognises.</li>
       <li>Windows user accounts nobody created, or Microsoft Defender/antivirus found disabled.</li>

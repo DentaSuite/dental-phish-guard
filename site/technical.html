@@ -73,6 +73,10 @@
     <div class="stage"><b>OPERATION</b>Interactive hands-on-keyboard remote access; repeat visits weeks apart</div>
     <div class="stage"><b>PROPAGATION</b>Victim's address book becomes the next distribution list</div>
   </div>
+  <figure style="margin:18px 0">
+    <img src="fake-update-screen.png" alt="Simulated fake Windows Update screen: black background, white text reading Working on updates 37% complete, Don't turn off your computer" style="width:100%;border:1px solid var(--line);border-radius:5px;display:block">
+    <figcaption class="muted" style="margin-top:8px">Fig. T1 — Reconstruction of the fake "Windows Update" overlay reported during payload installation (black screen, white "Working on updates / Don't turn off your computer" text with a spinner). Simulated for awareness; the operator retains interactive control of the desktop behind it. Not a forensic capture.</figcaption>
+  </figure>
   <p>The propagation model is what makes this campaign effective in a niche sector: every message arrives from a genuine, previously-corresponding address, so SPF, DKIM and DMARC all pass and reputation-based filtering is useless. Targeting requires no attacker knowledge of the industry — the compromised mailbox's own contact graph is the targeting.</p>
 
   <h2><span class="no">2</span>Message evidence</h2>
