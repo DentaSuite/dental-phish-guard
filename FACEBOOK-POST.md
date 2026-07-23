@@ -1,96 +1,76 @@
-# Facebook post — ready to paste
+# Facebook post — plain text, paste as-is
 
 ---
 
-⚠️ WARNING TO EVERYONE IN AUSTRALIAN DENTISTRY — owners, associates, locums, OHTs, hygienists, practice managers, reception — active email attack spreading clinic-to-clinic ⚠️
+WARNING TO ALL AUSTRALIAN DENTAL PRACTICES - PLEASE READ AND SHARE
 
-TL;DR
+Our practice was hacked this year, and the same attack is now working its way through dental clinics across Melbourne and beyond. I want to explain exactly what happened to us so it doesn't happen to you, because once you know what to look for it's actually easy to spot.
 
-🔴 Emails from REAL colleagues' REAL addresses saying they've "shared a file/folder with you" are currently being sent by hackers who have taken over those colleagues' accounts. Subject line is usually "[Practice name] shared a file with you", styled like a Microsoft/OneDrive share notice, and it asks you to open the link on a desktop or laptop — that instruction is the biggest red flag, because the link installs remote-control malware on Windows PCs behind a fake "Windows Update" screen.
-🔴 They often land at ridiculous hours — 3am–6am — because the attackers are overseas. No real clinic shares documents with you in the middle of the night.
-🔴 The links use made-up names on odd endings like .vu (examples seen: avernix .vu, uvanv .vu, xornavo .vu, lornica .vu, clientesetupdoc .vu, docsecdental .vu — spaces added deliberately; a NEW domain is used every wave).
-🔴 Before opening ANY share link — even from someone you trust — phone the sender and ask if they actually sent it. Do not verify by email reply; the hacker controls that mailbox and will say yes.
-🔴 If you clicked: unplug the PC from the network NOW, tell the owner/manager, and see the recovery checklist below. An antivirus scan is NOT enough.
-🔴 This isn't only an owner problem. If you're an associate or locum and you check your email on a practice computer — or stay logged in / auto-login anywhere you work — YOUR accounts and saved passwords are stolen the moment that machine is compromised, even though it isn't your practice and isn't your computer.
+WHAT THE EMAIL LOOKS LIKE
 
-Full details below 👇
+You get an email from a dental practice you know. Real practice, real email address, someone you've actually corresponded with. The subject is something like "Smith Dental shared a file with you" and it looks exactly like a Microsoft OneDrive share notice, with an Open Document button. No attachment, just a link.
 
-━━━━━━━━━━━━━━━
+Two things give it away.
 
-HOW THE ATTACK WORKS
+First, it asks you to open the link on your "Desktop or Windows Laptop". No real file share cares what device you use. The reason it asks is that the virus only runs on Windows computers.
 
-A criminal group hacks one clinic's email account, then sends phishing emails from that genuine account to every practice and clinician it has ever corresponded with. Recipients are hidden (BCC), so you can't see it went to half the state. Because it's a real account, it passes every technical check and sails through spam filters. The only defence is a human recognising the pattern:
+Second, the timing is often ridiculous. Some of these arrived at 3 or 4 in the morning. No clinic is sharing referral documents with you at 3am. The attackers are overseas.
 
-• From a dentist, practice or lab you genuinely know
-• "…shared a file with you" / "…shared a folder with you" — usually a fake Microsoft/OneDrive-style card with an "Open Document" button
-• A line like "For security reasons, please view this document using your Desktop or Windows Laptop"
-• No attachment, just a link, to a strange address ending in something like .vu
-• Timestamps that make no sense — these frequently arrive in the very early morning (3am–6am AEST), which points to an overseas operator and is a giveaway on its own
+The links go to made-up addresses ending in .vu - ones we've seen are avernix .vu, uvanv .vu, xornavo .vu, lornica .vu, clientesetupdoc .vu and docsecdental .vu (I've put spaces in so nobody can click them). They register a brand new address for every round of emails, so don't rely on recognising these. Recognise the pattern.
 
-If someone clicks and runs it, remote-access software installs behind a fake "Windows Update" screen — we watched the mouse moving on an infected machine while it showed "installing updates". A real human then operates that PC remotely: reading email, harvesting every saved password, and sending the same phishing email onward to everyone in the address book. They come back for repeat visits over the following weeks.
+WHAT HAPPENS IF SOMEONE CLICKS
 
-And don't trust link scanners for this one: the attackers show scanning tools a harmless decoy page. "I scanned it and it was clean" means nothing.
+A staff member at our practice clicked one. What installs is remote control software that hides behind a fake "Windows Update" screen. I watched our infected computer with my own eyes - the mouse was moving around behind that update screen. There was an actual person on the other end controlling our machine. They came back for a second go about a month later.
 
-WHY THIS MATTERS TO ASSOCIATES, LOCUMS AND EVERY CLINICIAN — NOT JUST OWNERS
+Once they're in, they read your email, take every password saved in the browser, and send the same scam email to everyone in your address book. That's how it spreads - every clinic that clicks becomes the next sender. The email you get comes from a genuine colleague because that colleague has already been hacked and usually has no idea.
 
-Most of us work across multiple practices and use whatever computer is in the surgery. Think about what's on those machines:
+One more thing. We ran one of the links through a scanner and it came back clean. It turns out the scam shows scanners a harmless decoy page. A clean scan means nothing with this one.
 
-• Your personal email logged in and set to stay signed in
-• Browser-saved passwords — email, banking, AHPRA, PRODA, indemnity, supplier accounts
-• Auto-login to practice management software with patient records under your name
+THE ONE RULE THAT BEATS IT
 
-If ONE machine at ONE practice you work at gets infected, the attacker has all of it. You don't have to click anything yourself — a receptionist clicking on the front-desk PC can compromise the account of every clinician who ever logged in on it.
+Before you open ANY unexpected shared file link, even from someone you trust - pick up the phone and ask them if they sent it. Thirty seconds. If their account is hacked they won't know until you call. Don't ask by replying to the email, because the hacker is the one who'll answer.
 
-So protect yourself wherever you work:
-1. Turn on two-factor authentication (2FA) on your personal email TODAY. It's ten minutes and it's the single best protection you have.
-2. Log OUT of your email and never tick "stay signed in" on practice computers that aren't yours.
-3. Don't let the browser save your passwords on shared/practice machines — especially banking.
-4. If a practice you've worked at announces it's been hit: change your passwords and sign out all sessions on your accounts, even if "your" computer seemed fine.
+IF YOU'RE AN ASSOCIATE, LOCUM, OHT OR HYGIENIST - THIS IS YOUR PROBLEM TOO
 
-THE GOLDEN RULE FOR EVERYONE
+Think about the computers at the practices you work at. Is your email signed in and set to stay signed in? Are your passwords saved in the browser? Banking, AHPRA, PRODA? If the receptionist clicks one of these on the front desk computer, everything you've ever logged into on that machine is gone too. It doesn't matter that it's not your practice and not your computer.
 
-📞 VERIFY BY PHONE. Unexpected share link — even from someone you trust? Ring them on their known number: "Did you send me this?" If their account is hacked, they usually have no idea. A 30-second call is the entire defence. Never verify by replying to the email.
+So wherever you work: turn on two-factor authentication on your personal email today, log out properly on practice computers, and don't let their browsers save your passwords. If a practice you've worked at gets hit, change your passwords even if nothing seems wrong.
 
-And never open a share link on a practice PC "because the email said to use a computer". That instruction IS the attack.
+IF SOMEONE HAS ALREADY CLICKED
 
-IF SOMEONE ALREADY CLICKED — RECOVERY CHECKLIST
+Speak up straight away, no blame. Then:
 
-Speak up immediately, no blame — minutes matter, and "nothing seemed to happen" still counts.
+1. Unplug that computer from the network immediately and stop using it.
+2. That machine needs to be wiped and Windows reinstalled. An antivirus scan is not enough - we learned this the hard way.
+3. From a DIFFERENT computer, change the email password, turn on two-factor authentication, and sign out all sessions.
+4. Check your email settings for forwarding rules or filters you didn't create. They add hidden rules to steal your mail.
+5. Every password saved on that machine should be treated as stolen. Change them all, banking first. If card details were saved, call the bank.
+6. Warn your contacts, because they're getting the scam email from your address next.
+7. If patient records may have been accessed, call your indemnity provider - there can be mandatory reporting obligations (OAIC).
+8. Report it at cyber.gov.au/report.
+9. Keep an eye on the practice bank account and any invoices.
 
-1. Unplug that PC from the network / turn off its Wi-Fi immediately. Stop using it.
-2. Wipe and reinstall Windows on that machine. With a live human attacker involved, antivirus "cleaning" cannot be trusted — full reinstall only.
-3. From a DIFFERENT clean device: change the email password, enable 2FA, sign out all sessions. This goes for EVERY person who was logged into anything on that machine — owner, associates, staff.
-4. Audit the mailbox: forwarding rules, filters and auto-replies you didn't create (attackers add hidden rules to steal or hide mail); confirm recovery email/phone unchanged; review connected apps.
-5. Assume every password saved in that PC's browsers is stolen. Change them all — banking first, then Medicare/PRODA, HICAPS, practice software, supplier portals. If bank/card details were saved or used on it, call the bank.
-6. Warn your contacts that emails from the compromised address may be malicious — they're the next targets.
-7. Patient data: practices hold health records, so if records may have been accessed you may have Notifiable Data Breach obligations (OAIC) — call your indemnity provider; most include cyber response support.
-8. Report it at cyber.gov.au/report (ACSC ReportCyber) — quick, and it helps get these domains taken down.
-9. Check practice bank accounts and recent invoices/payments for tampering — invoice fraud is a common follow-up.
+And if your IT company remotes in, has a look and says "we didn't find anything" - that is not good enough for this attack. Ask them specifically: has the machine been reimaged, have the mailbox rules been checked, is two-factor turned on, have the sign-in logs been reviewed.
 
-If your IT provider's response is "we remoted in and found nothing", push back and require in writing: machine reimaged, mailbox rules audited, MFA enforced, sign-in logs reviewed. That's the minimum.
+A REQUEST TO REFERRERS AND LABS
 
-A REQUEST TO REFERRERS, LABS AND SPECIALISTS
+Please just attach documents to your emails, or use Medical-Objects or HealthLink, rather than sending "click here to download" links. If attachments are the normal way we all send things, these scam links stick out immediately.
 
-When you send documents to another practice, ATTACH the file (or use a secure clinical messaging platform like Medical-Objects/HealthLink) instead of a "click here to download" link to an outside site. If attachments become the norm across our referral networks, every "download my document from this website" email instantly stands out as the scam it probably is. (Unexpected attachments that ask you to "enable macros/editing" are their own red flag — but a plain PDF attached to a referral is the normal, expected pattern.)
+WE'VE PUT EVERYTHING IN ONE PLACE
 
-FOR PRACTICE OWNERS — MAKE A CLICK SURVIVABLE
+I've set up a free site for the profession with the full details of this attack, live numbers on how many clinics have been hit (nobody is named - affected clinics are victims and we call them privately), a printable DO NOT OPEN poster for your front desk, a staff training booklet, a free browser extension that flags these emails in Gmail and Outlook, a step-by-step "what should I do" tool, and a setup guide to hand your IT provider:
 
-Ask your IT for these by name: 2FA enforced on all mailboxes; staff on standard (non-admin) Windows accounts so software can't be installed; application control (Smart App Control / AppLocker) and Defender ASR rules on; DNS filtering at the router; a mail rule that quarantines links to risky endings like .vu; tested backups the PCs can't overwrite. Mostly free, one afternoon of work.
+phishwatch.parkrddental.com.au
 
-EVERYTHING IN ONE PLACE — FREE
+Everything on it is free and open source, so your IT provider can check exactly what it does before installing anything. If you've received one of these emails, please report it through the site - the clinic it came from almost certainly doesn't know they've been hacked, and a quiet phone call is how they find out before more damage is done.
 
-We've put up an advisory site for the profession: live statistics on the outbreak, a map of affected areas (no clinic is ever named), the full warning-sign list, a printable DO-NOT-OPEN poster for your front desk, a staff training booklet, a free browser extension that flags these emails in Gmail/Outlook web, and a copy-paste setup guide for your IT provider:
-
-👉 phishwatch.parkrddental.com.au
-
-Everything is open source — the code is on GitHub, linked from the site, so you or your IT provider can verify exactly what it does before installing. If you've received one of these emails, please report it there: the clinic it came from is a victim who usually has no idea, and they get a private phone call, never a public naming.
-
-Please SHARE this with any dental group, colleague or practice you know — every clinic that falls for it becomes a launchpad against dozens more. Stay safe and verify by phone. 🦷
+Please share this with any dentist, practice or dental group you know. Every clinic that gets caught becomes a launchpad for attacking dozens more. Stay sharp and verify by phone.
 
 ---
 
 # Notes for you (not part of the post)
 
-- Domains are written with spaces deliberately so Facebook doesn't linkify them and nobody fat-fingers a click. It also avoids Facebook suppressing the post for containing live malicious links.
-- Consider also posting in the closed Australian dentistry FB groups where associates/OHTs actually are (not just practice-owner groups — the associate angle now makes it relevant to them), and asking the ADA branch newsletter to carry a version.
-- Also report the domains at safebrowsing.google.com/safebrowsing/report_phish/ — once Google flags them, Chrome shows a full-page red warning to anyone who clicks, which protects people who never see your post.
+- Formatting is plain text on purpose: Facebook strips bold/markdown, so headings are in capitals and lists use plain numbers. It will paste exactly as it looks here.
+- Domains are written with spaces so Facebook doesn't turn them into links and nobody can click them. It also stops Facebook suppressing the post for containing live malicious links.
+- Post to your practice page first, then share into the AU dentistry groups (including associate/OHT groups - the associate section makes it relevant to them). Ask ADAVB / ADA to carry a version in their member alerts.
+- Also report the domains at safebrowsing.google.com/safebrowsing/report_phish/ so Chrome itself blocks them for anyone who clicks.

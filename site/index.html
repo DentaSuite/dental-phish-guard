@@ -110,7 +110,7 @@
     <table class="meta">
       <tr><th>Status</th><td><span class="sev">ACTIVE</span></td></tr>
       <tr><th>First observed</th><td>Mid-2026; most recent wave 22–23 July 2026</td></tr>
-      <tr><th>Sector affected</th><td>Dental practices, Australia (current cluster: Victoria)</td></tr>
+      <tr><th>Sector affected</th><td>Dental practices, Australia-wide (compromised senders identified to date in Victoria and New South Wales)</td></tr>
       <tr><th>Threat type</th><td>Business email compromise → credential-themed file-share lure → remote-access trojan (Windows)</td></tr>
       <tr><th>Last updated</th><td id="meta-updated">23 July 2026</td></tr>
       <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 7).</td></tr>
@@ -138,7 +138,7 @@
     <h2><span class="no">1</span>Summary</h2>
     <p>An ongoing phishing campaign is propagating between Australian dental practices through compromised email accounts. After gaining access to a clinic's mailbox, the operator sends "shared a file with you" emails to the clinic's correspondents. Because these messages originate from a genuine, previously trusted account, they pass SPF, DKIM and DMARC authentication and are rarely intercepted by spam filtering.</p>
     <p>The linked pages deliver a remote-access trojan for Windows. During installation the malware displays a fake Windows Update screen; an infected machine observed by the issuing practice showed live hands-on-keyboard control by a remote operator. Follow-on activity has included repeat access attempts weeks after initial compromise.</p>
-    <p>Each recipient practice that is compromised becomes a new distribution point to its own contact network. The current identified cluster is in south-east Melbourne and is consistent with propagation through local referral relationships.</p>
+    <p>Each recipient practice that is compromised becomes a new distribution point to its own contact network. Compromised senders have been identified in both Victoria (a south-east Melbourne cluster consistent with propagation through local referral relationships) and New South Wales, indicating national reach: any practice that has ever corresponded with an affected clinic may be targeted regardless of state.</p>
     <p>Link-scanning services return benign results for this infrastructure: the kit serves a decoy page to automated scanners. A "clean" URL scan is not evidence of safety for this campaign.</p>
   </div>
 </section>
@@ -189,7 +189,7 @@
         <div class="cell"><div class="num" style="font-size:17px" id="s-last">–</div><div class="lbl">most recent detection</div></div>
       </div>
       <div id="map" aria-label="Map of approximate affected-practice locations"></div>
-      <div class="fig-caption">Fig. 2 — Approximate locations of identified compromised practices. The concentration along a single metropolitan corridor is consistent with spread through local referral networks.</div>
+      <div class="fig-caption">Fig. 2 — Approximate locations of identified compromised practices, shown where each sending practice is located. Local clusters follow referral networks, but identified senders now span multiple states.</div>
     </div>
   </div>
 </section>
