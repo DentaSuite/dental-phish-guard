@@ -77,6 +77,14 @@ FOR PRACTICE OWNERS — MAKE A CLICK SURVIVABLE
 
 Ask your IT for these by name: 2FA enforced on all mailboxes; staff on standard (non-admin) Windows accounts so software can't be installed; application control (Smart App Control / AppLocker) and Defender ASR rules on; DNS filtering at the router; a mail rule that quarantines links to risky endings like .vu; tested backups the PCs can't overwrite. Mostly free, one afternoon of work.
 
+EVERYTHING IN ONE PLACE — FREE
+
+We've put up an advisory site for the profession: live statistics on the outbreak, a map of affected areas (no clinic is ever named), the full warning-sign list, a printable DO-NOT-OPEN poster for your front desk, a staff training booklet, a free browser extension that flags these emails in Gmail/Outlook web, and a copy-paste setup guide for your IT provider:
+
+👉 phishwatch.parkrddental.com.au
+
+Everything is open source — the code is on GitHub, linked from the site, so you or your IT provider can verify exactly what it does before installing. If you've received one of these emails, please report it there: the clinic it came from is a victim who usually has no idea, and they get a private phone call, never a public naming.
+
 Please SHARE this with any dental group, colleague or practice you know — every clinic that falls for it becomes a launchpad against dozens more. Stay safe and verify by phone. 🦷
 
 ---
