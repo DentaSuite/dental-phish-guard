@@ -30,6 +30,16 @@
   code { font-family: var(--mono); font-size: 88%; background: var(--tint); border: 1px solid var(--line-soft); padding: 1px 5px; border-radius: 3px; }
 
   .masthead { border-bottom: 3px solid var(--ink); }
+  .sectionnav { position: sticky; top: 0; z-index: 1200; background: #fff; border-bottom: 1px solid var(--line); }
+  .sectionnav .wrap { display: flex; gap: 4px; overflow-x: auto; padding: 0 22px; }
+  .sectionnav a { font-family: var(--mono); font-size: 12px; letter-spacing: .05em; color: var(--muted); text-decoration: none; padding: 10px 12px; white-space: nowrap; border-bottom: 3px solid transparent; }
+  .sectionnav a:hover { color: var(--ink); }
+  .sectionnav a.hot { color: var(--alert); font-weight: 600; }
+  .starthere { border: 2px solid var(--ink); border-radius: 6px; margin: 26px 0 6px; }
+  .starthere-head { padding: 14px 20px 4px; }
+  .starthere-head .kicker { font-family: var(--mono); font-size: 11.5px; letter-spacing: .16em; color: var(--alert); font-weight: 600; }
+  .starthere-head p { margin: 6px 0 0; }
+  .starthere iframe { width: 100%; border: 0; display: block; }
   .masthead .wrap { display: flex; align-items: baseline; gap: 16px; padding: 18px 22px 14px; flex-wrap: wrap; }
   .masthead .org { font-family: var(--mono); font-weight: 500; font-size: 14px; letter-spacing: .08em; }
   .masthead .role { font-size: 13px; color: var(--muted); }
@@ -104,6 +114,17 @@
   </div>
 </header>
 
+<nav class="sectionnav" aria-label="Sections">
+  <div class="wrap">
+    <a class="hot" href="#starthere">START HERE</a>
+    <a href="#indicators">SPOT THE EMAIL</a>
+    <a href="#selfcheck">CHECK YOUR PRACTICE</a>
+    <a href="#statistics">LIVE MAP</a>
+    <a href="#resources">FREE TOOLS &amp; HOW-TO</a>
+    <a href="#reporting">REPORT ONE</a>
+  </div>
+</nav>
+
 <div class="advisory-head">
   <div class="wrap">
     <h1>Phishing campaign distributing remote-access malware via compromised dental practice mailboxes</h1>
@@ -116,7 +137,13 @@
       <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 7).</td></tr>
       <tr><th>Source code</th><td>All tooling and this site are open source for independent review: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a></td></tr>
     </table>
-    <div class="notice" style="margin-top:20px"><b>Not sure which parts apply to you?</b> Use the <a href="triage.html">interactive triage</a> — answer a few questions (practice owner or associate, what happened) and get a checklist written for your exact situation. Runs entirely in your browser; nothing is recorded.</div>
+    <div class="starthere" id="starthere">
+      <div class="starthere-head">
+        <span class="kicker">START HERE — TWO QUICK QUESTIONS</span>
+        <p>Answer below and you'll get a plain-English checklist for your exact situation — whether you own a practice or work across several, and whether anything has been clicked. Nothing you answer is recorded. (Prefer a full page? <a href="triage.html">Open it separately</a>.)</p>
+      </div>
+      <iframe id="triageFrame" src="triage.html?embed=1" height="430" title="What should I do? — interactive triage"></iframe>
+    </div>
     <nav class="toc" aria-label="Contents">
       <strong>Contents</strong>
       <ol>
@@ -273,6 +300,20 @@
       <li><span class="ftype">HTML · guide</span> <a href="it-guide.html">IT configuration guide</a>
         <span class="fdesc">Mail-transport rules for Microsoft 365 and Google Workspace (these also protect the Outlook desktop application and mobile devices), DNS filtering, and workstation hardening. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/site/it-guide.html" rel="noopener">Source on GitHub</a></span></li>
     </ul>
+    <h3>How to install the Phish Guard extension (about two minutes)</h3>
+    <p>Download the extension zip above, right-click it and choose <b>Extract All</b> (remember where the folder goes — usually Downloads), then:</p>
+    <div class="figure">
+      <img src="install-steps.png" alt="Four steps: open chrome://extensions, switch on Developer mode, click Load unpacked and choose the extracted folder, extension appears in the list" style="width:100%;display:block">
+      <div class="fig-caption">Fig. 4 — Installing in Chrome. In Microsoft Edge the address is edge://extensions; every other step is identical. Repeat on each computer that checks email.</div>
+    </div>
+    <h3>What it does once installed</h3>
+    <p>Nothing, most of the time — it sits quietly. But when an email matching this attack is opened in Gmail or Outlook web, a red warning appears above the message before anyone can click, spelling out exactly why it's dangerous:</p>
+    <div class="figure">
+      <img src="extension-banner.png" alt="A phishing email in webmail with the extension's red DANGER banner above it listing the reasons it was flagged" style="width:100%;display:block">
+      <div class="fig-caption">Fig. 5 — A live capture of the extension flagging a demonstration email. It also keeps a private list of which clinics sent flagged emails (click its toolbar icon) so they can be phoned and warned, and — unless you switch it off in that popup — sends the sender address and attack domains (never the email itself) to this advisory's statistics.</div>
+    </div>
+    <h3>Using the printed materials</h3>
+    <p>Print the <b>poster</b> and the <b>sweep flowchart</b> on A4 and put them where email is actually read — the front desk and the staff room, not the filing cabinet. Open the <b>booklet</b> in Word, type your practice name on the cover, print a copy per staff member, and walk through it at a team meeting — it takes about 15 minutes and reception staff are the most important audience. The <b>IT guide</b> isn't for you: forward it to whoever looks after your computers with the message "please do these and confirm in writing".</p>
     <p class="muted">Everything above, including this site itself, is published in full at <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a> so you or your IT provider can verify exactly what it does before installing. Detection reports are write-only; submitted data is readable only by the advisory coordinator.</p>
   </div>
 </section>
@@ -367,6 +408,15 @@
       if (bounds.length) map.fitBounds(bounds, { padding: [44, 44], maxZoom: 10 });
     })
     .catch(() => { document.querySelector(".fig-caption").textContent = "Fig. 2 — Live figures temporarily unavailable."; });
+
+  // Same-origin iframe: grow the embedded triage to fit its content.
+  const tf = document.getElementById("triageFrame");
+  setInterval(() => {
+    try {
+      const h = tf.contentDocument?.body?.scrollHeight;
+      if (h && Math.abs(h - tf.clientHeight) > 8) tf.style.height = (h + 24) + "px";
+    } catch { /* not loaded yet */ }
+  }, 400);
 
   const REPORT_EMAIL = "info@parkrddental.com.au";
   document.getElementById("reportForm").addEventListener("submit", (e) => {

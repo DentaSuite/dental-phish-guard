@@ -230,6 +230,14 @@ const OUT = {
   ], note: "Signing out and saving nothing on shared machines is exactly right — it means a compromised practice PC has little of yours to steal." }
 };
 
+// Embedded mode (?embed=1): hide the page chrome so it sits inside the advisory.
+if (location.search.includes("embed")) {
+  document.querySelector("header").style.display = "none";
+  document.querySelector("h1").style.display = "none";
+  document.querySelector(".intro").style.display = "none";
+  document.body.style.background = "transparent";
+}
+
 let path = [];
 // Deep link: triage.html#out_infected opens that checklist directly.
 const hash = location.hash.replace("#", "");
