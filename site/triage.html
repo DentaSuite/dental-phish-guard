@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What should I do? — Dental Phish Watch triage</title>
+<meta name="description" content="Answer a few questions and get a personalised checklist for the dental phishing campaign — whether you own a practice or work across several.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1A1D21; --muted:#5A6470; --alert:#B01823; --alert-wash:#FBEFF0; --ok:#3D6B54; --ok-wash:#EAF2EE; --warn:#8a6d1a; --warn-border:#C9A94E; --warn-wash:#FBF6E6; --line:#D6DBE1; --soft:#E7EAEE; --tint:#F5F6F8; --mono:"IBM Plex Mono",ui-monospace,monospace; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#fff; color:var(--ink); font:15.5px/1.6 "IBM Plex Sans",system-ui,sans-serif; }
+  .wrap { max-width:720px; margin:0 auto; padding:0 20px 70px; }
+  header { border-bottom:3px solid var(--ink); margin-bottom:8px; }
+  header .wrap { display:flex; align-items:baseline; gap:14px; padding:16px 20px 12px; flex-wrap:wrap; }
+  .org { font-family:var(--mono); letter-spacing:.08em; font-weight:600; font-size:13.5px; }
+  .org a { color:inherit; text-decoration:none; }
+  .tag { font-size:12.5px; color:var(--muted); }
+  h1 { font-size:23px; margin:26px 0 6px; }
+  .intro { color:var(--muted); font-size:14.5px; margin-bottom:22px; }
+  a { color:var(--ink); text-underline-offset:2px; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+
+  .crumbs { font-size:12.5px; color:var(--muted); margin-bottom:14px; min-height:20px; }
+  .crumbs span { background:var(--tint); border:1px solid var(--soft); border-radius:999px; padding:2px 10px; margin-right:6px; display:inline-block; margin-bottom:4px; }
+
+  .card { border:1px solid var(--line); border-radius:6px; padding:26px; }
+  .q { font-size:19px; font-weight:700; margin:0 0 6px; }
+  .qsub { color:var(--muted); font-size:14px; margin:0 0 18px; }
+  .opts { display:grid; gap:10px; }
+  .opt { text-align:left; font:500 15.5px "IBM Plex Sans",sans-serif; background:#fff; border:1.5px solid var(--line); border-radius:6px; padding:14px 18px; cursor:pointer; transition:border-color .12s, background .12s; color:var(--ink); }
+  .opt:hover { border-color:var(--ink); background:var(--tint); }
+  .opt .hint { display:block; font-weight:400; font-size:13px; color:var(--muted); margin-top:2px; }
+
+  .nav { margin-top:18px; display:flex; gap:14px; }
+  .nav button { font:600 13.5px "IBM Plex Sans",sans-serif; background:#fff; border:1px solid var(--line); color:var(--muted); border-radius:4px; padding:8px 16px; cursor:pointer; }
+  .nav button:hover { border-color:var(--ink); color:var(--ink); }
+
+  .banner { border-radius:5px 5px 0 0; margin:-26px -26px 20px; padding:14px 26px; font-weight:700; font-size:16px; color:#fff; }
+  .banner .sev { display:block; font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.14em; opacity:.85; margin-bottom:2px; }
+  .card.ok .banner { background:var(--ok); }
+  .card.warn .banner { background:#A5852B; }
+  .card.bad .banner { background:var(--alert); }
+
+  .check { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px dashed var(--soft); }
+  .check:last-of-type { border-bottom:0; }
+  .check input { width:19px; height:19px; margin-top:3px; flex:0 0 auto; accent-color:var(--ink); cursor:pointer; }
+  .check label { cursor:pointer; }
+  .check .why { display:block; font-size:13px; color:var(--muted); margin-top:1px; }
+  .check.done label { text-decoration:line-through; color:var(--muted); }
+  .outnote { background:var(--tint); border:1px solid var(--soft); border-radius:5px; padding:11px 15px; font-size:13.5px; margin-top:16px; }
+  .mono { font-family:var(--mono); font-size:12.5px; background:var(--tint); border:1px solid var(--soft); border-radius:4px; padding:6px 9px; display:inline-block; }
+  .progress { font-size:12px; color:var(--muted); text-align:right; margin-top:8px; }
+  @media print { header, .nav, .crumbs, .intro { display:none; } .card { border:0; padding:0; } .banner { margin:0 0 14px; border-radius:5px; } }
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <span class="org"><a href="index.html">DENTAL PHISH WATCH</a></span>
+  <span class="tag">Advisory DPW-2026-001 — interactive triage</span>
+</div></header>
+
+<div class="wrap">
+  <h1>What should I do?</h1>
+  <p class="intro">Answer a few questions about your situation and get a checklist written for it. Nothing you answer here is recorded or sent anywhere — this runs entirely in your browser.</p>
+  <div class="crumbs" id="crumbs"></div>
+  <div id="stage"></div>
+</div>
+
+<script>
+const TREE = {
+  start: {
+    q: "Which best describes you?",
+    sub: "The right steps differ depending on whether you run the practice or work across practices.",
+    opts: [
+      { t: "I own or manage a practice", h: "Responsible for the practice mailbox, computers and staff", next: "owner_what" },
+      { t: "I'm an associate, locum, hygienist, OHT or staff member", h: "You work at one or more practices and use their computers", next: "assoc_click" }
+    ]
+  },
+
+  owner_what: {
+    q: "What's the situation at your practice?",
+    opts: [
+      { t: "We received a suspicious \"shared a file\" email — nobody clicked it", next: "out_contain" },
+      { t: "Someone clicked the link", next: "owner_after" },
+      { t: "A colleague says they received a suspicious email FROM our practice", h: "That call means your mailbox is likely compromised", next: "out_mailbox" },
+      { t: "Nothing specific — I want to check whether we're affected", next: "out_diagnose" }
+    ]
+  },
+
+  owner_after: {
+    q: "What happened after the click?",
+    sub: "If different people report different things, choose the worst answer that applies.",
+    opts: [
+      { t: "The page opened, but nothing downloaded or installed", next: "out_lockdown" },
+      { t: "A download ran, a \"Windows Update\" screen appeared, or the PC has behaved oddly since", next: "out_infected" },
+      { t: "Not sure what happened", h: "When unsure, respond as if infected — it's the only safe assumption", next: "out_infected" }
+    ]
+  },
+
+  assoc_click: {
+    q: "Have you clicked one of these \"shared a file\" links yourself, on any computer?",
+    opts: [
+      { t: "Yes", next: "assoc_where" },
+      { t: "No", next: "assoc_saved" },
+      { t: "Not sure", h: "Treated cautiously — assume your details may be exposed", next: "out_assoc_exposed" }
+    ]
+  },
+
+  assoc_where: {
+    q: "Where did you click it?",
+    opts: [
+      { t: "On a practice computer", next: "out_assoc_clicked_practice" },
+      { t: "On my own laptop or phone", next: "out_assoc_clicked_own" }
+    ]
+  },
+
+  assoc_saved: {
+    q: "On the practice computers you use, does any of this apply to you?",
+    sub: "Staying signed in to your email · the browser saves your passwords · you've used personal accounts (banking, AHPRA, PRODA) on them",
+    opts: [
+      { t: "Yes — at least one of those", next: "assoc_practicehit" },
+      { t: "No — I always sign out and never save passwords", next: "out_assoc_hygiene" }
+    ]
+  },
+
+  assoc_practicehit: {
+    q: "Has any practice you work at been affected by this campaign?",
+    sub: "Affected means: received these emails, had a machine infected, or sent phishing to others.",
+    opts: [
+      { t: "Yes, or I'm not sure", next: "out_assoc_exposed" },
+      { t: "No — none that I know of", next: "out_assoc_prevent" }
+    ]
+  }
+};
+
+const OUT = {
+  out_contain: { sev: "ok", title: "Contain and report — you're in good shape", items: [
+    ["Don't click the link — not even \"to check\"", "Looking is how every infection here started"],
+    ["Save the email as evidence", "Gmail: message menu (⋮) → Download message"],
+    ["Report it via the advisory's reporting form", "The sender clinic is a victim — they get a private phone call, never public naming", "index.html#reporting"],
+    ["Delete the email and warn your team at the next huddle", ""],
+    ["Phone the sender clinic on their usual number if you know them", "They almost certainly don't know their account is compromised"],
+    ["Run the mailbox sweep monthly", "The 30-second search query is in section 4 of the advisory", "index.html#selfcheck"]
+  ], note: "No click means no infection — this email can't hurt you by sitting in the inbox. Reporting it is what protects the next practice." },
+
+  out_lockdown: { sev: "warn", title: "Precautionary lockdown — link opened, nothing ran", items: [
+    ["From a DIFFERENT device: change the practice email password", "Not from the machine that opened the link"],
+    ["Turn on two-factor authentication and sign out all sessions", "In account security settings"],
+    ["Check mail settings for forwarding rules or filters you didn't create", "Attackers add rules to steal or hide mail"],
+    ["Watch the machine that opened the link", "Fake \"Windows Update\", self-moving mouse, busy while idle → come back and choose \"treat as infected\""],
+    ["Report the email via the advisory form", "", "index.html#reporting"]
+  ], note: "Opening the page alone usually isn't enough to infect — the payload needs a download to run. These steps close the gap in case anything happened unseen." },
+
+  out_infected: { sev: "bad", title: "Treat the machine as infected — act now", items: [
+    ["Unplug that PC from the network / Wi-Fi immediately and stop using it", "A live intruder may be connected right now"],
+    ["Arrange a wipe and Windows reinstall for that machine", "Antivirus \"cleaning\" cannot be trusted after interactive remote access"],
+    ["From a separate clean device: change the email password, enable two-factor, sign out all sessions", ""],
+    ["Audit the mailbox: forwarding rules, filters, auto-replies you didn't create; recovery details; connected apps", ""],
+    ["Treat every password saved in that PC's browsers as stolen — change them, banking first", "Then Medicare/PRODA, HICAPS, practice software, suppliers. Call the bank if card details were saved"],
+    ["Warn your contacts that email from your address may be malicious", "They are the next targets"],
+    ["Call your indemnity provider about patient data", "The Notifiable Data Breaches scheme (OAIC) may apply"],
+    ["Report to the ACSC and via the advisory form", "cyber.gov.au/report — attach the original email if you have it", "index.html#reporting"],
+    ["Check practice bank accounts and recent invoices for tampering", "Invoice fraud is a common follow-up"]
+  ], note: "Full detail for each step is in section 8 of the advisory. If your IT provider says \"we scanned it and found nothing\" — require reimaging, a mailbox-rule audit, MFA enforcement and a sign-in log review, in writing." },
+
+  out_mailbox: { sev: "bad", title: "Your mailbox is likely compromised — the caller did you a favour", items: [
+    ["Thank the caller, and ask what the email looked like and when it arrived", "Useful evidence; their copy is proof even if yours was scrubbed"],
+    ["From a known-clean device: change the mailbox password, enable two-factor, sign out all sessions", "This evicts the intruder — do it before anything else"],
+    ["Audit mail settings: forwarding rules, filters, auto-replies, recovery details, connected apps", "Deleting their hidden rules is as important as the password"],
+    ["Work out which computers access this mailbox — check each for infection", "Fake \"Windows Update\", unknown remote-access programs, odd behaviour → that machine gets wiped"],
+    ["Warn your contact list that emails from you may be malicious", "The attacker has already mailed many of them — a quick group message limits the damage"],
+    ["Call your indemnity provider about patient data obligations (OAIC)", ""],
+    ["Report to the ACSC and via the advisory form", "", "index.html#reporting"]
+  ], note: "An empty Sent folder proves nothing — operators delete their tracks. Assume every contact received the phishing email." },
+
+  out_diagnose: { sev: "ok", title: "Health check — find out in about ten minutes", items: [
+    ["Search the practice mailbox (All Mail) for the campaign wording", "Query: \"shared a file with you\" OR \"shared a folder with you\" OR \"shared a file for you\""],
+    ["Ask all staff, no blame: did anyone open such a link? Any strange \"Windows Update\" screens?", "Honest answers in minutes beat confessions in weeks"],
+    ["Check account activity for unfamiliar sign-ins", "Gmail: Security Checkup + the \"Details\" link bottom-right of the inbox · Microsoft: account.microsoft.com sign-in activity"],
+    ["Check mail settings for forwarding rules or filters nobody created", ""],
+    ["Check each Windows PC's installed programs for remote-access tools nobody installed", "AnyDesk, ScreenConnect, Atera, RustDesk, TeamViewer"],
+    ["Print the sweep flowchart and the DO-NOT-OPEN poster for the staff room", "", "downloads/Staff-Sweep-Flowchart.pdf"]
+  ], note: "Found a matching email, a click, or a symptom? Run this tool again and choose that answer — you'll get the checklist for it." },
+
+  out_assoc_clicked_practice: { sev: "bad", title: "Tell the practice owner or manager NOW — then protect yourself", items: [
+    ["Report it to the owner/manager immediately, no blame", "That machine must come off the network and be assessed — minutes matter and it isn't optional"],
+    ["From your OWN device: change your personal email password and turn on two-factor", "Your email resets every other account — it comes first"],
+    ["Sign out of all sessions on your email and any account you used on that computer", ""],
+    ["Change any passwords the practice browser had saved for you — banking first", "Then AHPRA, PRODA, indemnity, super"],
+    ["Watch your bank statements and email for unfamiliar activity over the coming weeks", ""],
+    ["If you work at other practices, mention it to them too", "You may have used their systems with the same passwords"]
+  ], note: "Speaking up immediately is the single most valuable thing you can do for the practice — the intruder counts on silence." },
+
+  out_assoc_clicked_own: { sev: "warn", title: "Your own device — risk depends on what it is", items: [
+    ["Windows laptop: treat it as suspect", "Disconnect it from Wi-Fi; if anything downloaded or a \"Windows Update\" screen appeared, have it wiped and reinstalled"],
+    ["Phone, iPad or Mac: the malware targets Windows and most likely did not run", "Still complete the steps below — the link may also harvest logins"],
+    ["From a different device: change your email password, enable two-factor, sign out all sessions", ""],
+    ["Change passwords for anything you used on the suspect device — banking first", ""],
+    ["Report the email via the advisory form", "So the clinic it came from gets warned", "index.html#reporting"]
+  ], note: "If in doubt about a Windows machine, wipe it. A reinstall costs an evening; a resident intruder costs far more." },
+
+  out_assoc_exposed: { sev: "warn", title: "Assume your saved details may be exposed — reset methodically", items: [
+    ["Change your personal email password first, from your own device, and turn on two-factor", "Email resets everything else, so it must be secured first"],
+    ["Sign out all sessions on your email account", "This evicts anyone already logged in"],
+    ["Change banking passwords next and watch statements", "Call the bank if cards were saved in any practice browser"],
+    ["Then AHPRA, PRODA, indemnity, super and anything else used on practice computers", ""],
+    ["Remove your saved passwords from practice browsers, and stop saving them there", "Use a password manager on your own device instead"],
+    ["Tell the practices you work at that you're doing this and why", "If your details were taken from their machine, others' were too"]
+  ], note: "This is precautionary — there may be no compromise at all. But these accounts are your identity and income; an hour of resets removes the doubt." },
+
+  out_assoc_prevent: { sev: "ok", title: "Lock in good habits before it matters", items: [
+    ["Turn on two-factor authentication on your personal email today", "Ten minutes; the single best protection you have"],
+    ["Sign out of your email on practice computers — never tick \"stay signed in\"", "One infected front desk PC exposes every account left logged in on it"],
+    ["Don't let practice browsers save your passwords — especially banking", ""],
+    ["Keep personal accounts (banking, AHPRA, PRODA) off practice machines where you can", ""],
+    ["Verify by phone before opening any unexpected share link — even from someone you trust", "Never verify by email reply; the intruder answers their email"],
+    ["Share the advisory with the practices you work at", "", "index.html"]
+  ], note: "Associates are exposed at every practice they touch — these habits protect you no matter whose computer is infected." },
+
+  out_assoc_hygiene: { sev: "ok", title: "Your hygiene is good — stay sharp", items: [
+    ["Keep two-factor on your personal email (turn it on now if it isn't)", ""],
+    ["Keep the verify-by-phone rule for every unexpected share link", "The emails come from real, trusted colleagues — that's the whole trick"],
+    ["Know the pattern: share lure + odd link (often .vu) + \"open on your desktop\" + odd hours", ""],
+    ["If a practice you work at gets hit, come back here and choose that answer", "You'll get the exposure checklist"],
+    ["Share the advisory with the practices you work at", "", "index.html"]
+  ], note: "Signing out and saving nothing on shared machines is exactly right — it means a compromised practice PC has little of yours to steal." }
+};
+
+let path = [];
+// Deep link: triage.html#out_infected opens that checklist directly.
+const hash = location.hash.replace("#", "");
+if (OUT[hash]) path = [{ label: "Direct link", next: hash }];
+
+function render() {
+  const key = path.length ? path[path.length - 1].next : "start";
+  const crumbs = document.getElementById("crumbs");
+  crumbs.innerHTML = path.map((p) => `<span>${p.label}</span>`).join("");
+  const stage = document.getElementById("stage");
+
+  if (TREE[key]) {
+    const n = TREE[key];
+    stage.innerHTML = `<div class="card">
+      <p class="q">${n.q}</p>
+      ${n.sub ? `<p class="qsub">${n.sub}</p>` : ""}
+      <div class="opts">${n.opts.map((o, i) =>
+        `<button class="opt" data-i="${i}">${o.t}${o.h ? `<span class="hint">${o.h}</span>` : ""}</button>`).join("")}
+      </div>
+      ${path.length ? `<div class="nav"><button id="back">← Back</button><button id="restart">Start over</button></div>` : ""}
+    </div>`;
+    stage.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
+      const o = TREE[key].opts[+b.dataset.i];
+      path.push({ label: o.t, next: o.next });
+      render();
+    }));
+  } else {
+    const o = OUT[key];
+    stage.innerHTML = `<div class="card ${o.sev}">
+      <div class="banner"><span class="sev">${o.sev === "bad" ? "URGENT" : o.sev === "warn" ? "PRECAUTION" : "GUIDANCE"}</span>${o.title}</div>
+      ${o.items.map((it, i) => `<div class="check" id="c${i}">
+        <input type="checkbox" id="cb${i}">
+        <label for="cb${i}">${it[2] ? `<a href="${it[2]}">${it[0]}</a>` : it[0]}${it[1] ? `<span class="why">${it[1]}</span>` : ""}</label>
+      </div>`).join("")}
+      ${o.note ? `<div class="outnote">${o.note}</div>` : ""}
+      <div class="nav">
+        <button id="back">← Back</button>
+        <button id="restart">Start over</button>
+        <button onclick="window.print()">Print this checklist</button>
+      </div>
+      <div class="progress" id="prog"></div>
+    </div>`;
+    const update = () => {
+      const boxes = [...stage.querySelectorAll("input")];
+      boxes.forEach((b, i) => document.getElementById("c" + i).classList.toggle("done", b.checked));
+      const done = boxes.filter((b) => b.checked).length;
+      document.getElementById("prog").textContent = done ? `${done} of ${boxes.length} done` : "";
+    };
+    stage.querySelectorAll("input").forEach((b) => b.addEventListener("change", update));
+  }
+  const back = document.getElementById("back");
+  if (back) back.addEventListener("click", () => { path.pop(); render(); });
+  const restart = document.getElementById("restart");
+  if (restart) restart.addEventListener("click", () => { path = []; render(); });
+  window.scrollTo({ top: 0 });
+}
+render();
+</script>
+</body>
+</html>
