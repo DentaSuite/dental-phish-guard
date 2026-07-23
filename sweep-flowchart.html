@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mailbox sweep flowchart</title>
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  :root { --ink:#1A1D21; --muted:#5A6470; --alert:#B01823; --alert-wash:#FBEFF0; --ok:#3D6B54; --ok-wash:#EAF2EE; --warn:#8a6d1a; --warn-wash:#FBF6E6; --line:#B4BCC5; --mono:"Consolas","IBM Plex Mono",monospace; }
+  * { box-sizing:border-box; }
+  body { width:210mm; min-height:297mm; margin:0; padding:10mm 12mm; font:13px/1.45 "Segoe UI",system-ui,sans-serif; color:var(--ink); background:#fff; }
+  h1 { font-size:21px; margin:0 0 2px; }
+  .sub { color:var(--muted); font-size:12px; margin-bottom:10px; }
+  .box { border:1.5px solid var(--ink); border-radius:5px; padding:8px 12px; margin:0 auto; max-width:158mm; background:#fff; }
+  .box b.t { display:block; font-size:13.5px; }
+  .q { border-width:2px; background:#F5F6F8; text-align:center; font-weight:700; max-width:120mm; }
+  .mono { font-family:var(--mono); font-size:11px; background:#F5F6F8; border:1px solid #DDD; border-radius:4px; padding:6px 8px; display:block; margin-top:5px; }
+  .arrow { text-align:center; font-size:15px; color:var(--muted); line-height:1.15; margin:1px 0; }
+  .branches { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6mm; margin-top:2px; }
+  .branches.two { grid-template-columns:1fr 1fr; max-width:170mm; margin-left:auto; margin-right:auto; }
+  .lbl { text-align:center; font-size:11px; font-weight:700; margin-bottom:2px; letter-spacing:.04em; }
+  .ok { border-color:var(--ok); background:var(--ok-wash); }
+  .ok .lblc { color:var(--ok); }
+  .warn { border-color:#C9A94E; background:var(--warn-wash); }
+  .bad { border-color:var(--alert); background:var(--alert-wash); }
+  .box ol, .box ul { margin:4px 0 0; padding-left:17px; }
+  .box li { margin:2.5px 0; font-size:12px; }
+  .foot { margin-top:8px; text-align:center; color:var(--muted); font-size:11px; }
+  .small { font-size:11.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+  <h1>Has our practice received the "shared a file" attack email?</h1>
+  <div class="sub">Run this sweep now, then monthly. One person searches; everyone answers. No blame — speed matters more than fault. &nbsp;·&nbsp; phishwatch.parkrddental.com.au</div>
+
+  <div class="box">
+    <b class="t">STEP 1 — Search the practice mailbox (search "All Mail", not just Inbox)</b>
+    <span class="mono">Gmail / Outlook search:&nbsp; "shared a file with you" OR "shared a folder with you" OR "shared a file for you"</span>
+    <span class="small">Suspect matches: from a real clinic, link only (no attachment), odd web address (often .vu), "open on your desktop / Windows laptop", sent at odd hours, BCC'd.</span>
+  </div>
+  <div class="arrow">▼</div>
+  <div class="box q">Any matching emails found?</div>
+
+  <div class="branches two">
+    <div>
+      <div class="lbl" style="color:var(--ok)">NO</div>
+      <div class="box ok"><b class="t">You're clear for now</b>
+        <ul><li>Show every staff member the DO-NOT-OPEN poster</li><li>Re-run this sweep monthly and after any warning from a colleague</li></ul>
+      </div>
+    </div>
+    <div>
+      <div class="lbl" style="color:var(--alert)">YES</div>
+      <div class="box bad"><b class="t">Do NOT click the link. Ask ALL staff, out loud, no blame:</b>
+        <ul>
+          <li>"Did anyone open this link, on any computer?"</li>
+          <li>"Has any PC shown a strange <b>Windows Update</b> screen, a mouse moving by itself, or run hot while idle?"</li>
+          <li>"Has any colleague asked about an email we don't remember sending?"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+  <div class="box q">What did the answers reveal?</div>
+
+  <div class="branches">
+    <div>
+      <div class="lbl" style="color:var(--ok)">NOBODY OPENED IT</div>
+      <div class="box ok"><b class="t">Contain &amp; report</b>
+        <ol>
+          <li>Save the email as evidence (Gmail: ⋮ → Download message)</li>
+          <li>Report it — phishwatch site form (the sender clinic is a victim and gets a private phone call)</li>
+          <li>Delete the email; warn the team at huddle</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="lbl" style="color:var(--warn)">LINK OPENED — NOTHING RAN</div>
+      <div class="box warn"><b class="t">Precautionary lockdown</b>
+        <ol>
+          <li>From a DIFFERENT device: change the email password, turn on 2-factor, sign out all sessions</li>
+          <li>Check mail settings for forwarding rules / filters you didn't create</li>
+          <li>Watch that PC for symptoms; report the email as at left</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="lbl" style="color:var(--alert)">SOMETHING RAN / SYMPTOMS / COLLEAGUE ASKED</div>
+      <div class="box bad"><b class="t">Treat as infected — act now</b>
+        <ol>
+          <li><b>Unplug that PC from network/Wi-Fi</b>; stop using it</li>
+          <li>Wipe &amp; reinstall Windows (antivirus is not enough)</li>
+          <li>From a clean device: email password + 2-factor + sign out everywhere; audit mail rules</li>
+          <li>Change browser-saved passwords — banking first; call the bank if card details were saved</li>
+          <li>Warn your contacts; call your indemnity provider re patient data (OAIC)</li>
+          <li>Report: cyber.gov.au/report + the phishwatch site</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Verify by phone before opening ANY share link — even from someone you trust. Never verify by email reply: the intruder answers their email.</div>
+</body>
+</html>
