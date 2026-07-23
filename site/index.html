@@ -4,188 +4,374 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dental Phish Watch — active email attack on Australian dental practices</title>
+<meta name="description" content="Community surveillance of the folder-share phishing campaign spreading between Australian dental clinics: live statistics, the attack pattern, protection kit, and sighting reports.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
-  :root { --red: #b71c1c; --dark: #1a1a2e; --grey: #555; }
+  :root {
+    --paper: #F6F8FA;
+    --card: #FFFFFF;
+    --ink: #0F2238;
+    --muted: #5B6B7C;
+    --alert: #C81E2E;
+    --alert-deep: #9E1522;
+    --alert-wash: #FBE9EB;
+    --safe: #0F766E;
+    --safe-wash: #E6F2F0;
+    --line: #DCE4EC;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
   * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; color: #222; line-height: 1.55; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
-  header { background: var(--red); color: #fff; padding: 36px 0 30px; }
-  header h1 { margin: 0 0 10px; font-size: 30px; }
-  header p { margin: 0; font-size: 17px; opacity: .95; max-width: 700px; }
-  h2 { color: var(--dark); margin: 40px 0 12px; font-size: 22px; border-bottom: 3px solid var(--red); padding-bottom: 6px; }
-  .tldr { background: #fdecea; border: 2px solid var(--red); border-radius: 10px; padding: 18px 22px; margin-top: 28px; }
-  .tldr li { margin: 6px 0; }
-  .cols { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
-  .cols > div { flex: 1 1 320px; }
-  img.example { max-width: 100%; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 3px 12px rgba(0,0,0,.12); }
-  .caption { font-size: 13px; color: var(--grey); font-style: italic; margin-top: 6px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; }
-  th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; }
-  th { background: #f7f7f7; }
-  .dom { color: var(--red); font-weight: 600; font-family: ui-monospace, monospace; }
-  .note { font-size: 13px; color: var(--grey); }
-  form { background: #f7f8fa; border: 1px solid #ddd; border-radius: 10px; padding: 22px; }
-  label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 4px; }
-  input, textarea, select { width: 100%; padding: 9px 10px; border: 1px solid #bbb; border-radius: 6px; font: inherit; font-size: 14px; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 "IBM Plex Sans", system-ui, sans-serif; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 22px; }
+  a { color: var(--alert-deep); }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--alert); outline-offset: 2px; }
+  h1, h2, h3 { font-family: "Archivo", sans-serif; }
+  code { font-family: var(--mono); font-size: 90%; background: #EDF1F5; padding: 1px 6px; border-radius: 4px; }
+
+  /* ---------- top bar ---------- */
+  .topbar { background: var(--ink); color: #fff; }
+  .topbar .wrap { display: flex; align-items: center; gap: 14px; padding: 13px 22px; }
+  .wordmark { font-family: var(--mono); font-weight: 600; letter-spacing: .18em; font-size: 13px; color: #fff; text-decoration: none; }
+  .wordmark span { color: #FF8A94; }
+  .status-chip { margin-left: auto; display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; background: rgba(200,30,46,.18); border: 1px solid rgba(255,138,148,.5); color: #FFD3D7; border-radius: 999px; padding: 5px 12px; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: #FF4D5E; animation: pulse 1.6s ease-out infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,77,94,.55);} 100% { box-shadow: 0 0 0 9px rgba(255,77,94,0);} }
+  @media (prefers-reduced-motion: reduce) { .pulse, .dot-pulse { animation: none !important; } html { scroll-behavior: auto; } }
+
+  /* ---------- hero ---------- */
+  .hero { background: linear-gradient(180deg, var(--ink) 0%, #16304D 100%); color: #fff; padding: 52px 0 84px; }
+  .hero .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; color: #8FB3D9; margin-bottom: 18px; }
+  .hero h1 { font-variation-settings: "wdth" 112; font-weight: 800; font-size: clamp(30px, 5vw, 52px); line-height: 1.06; margin: 0 0 18px; max-width: 17ch; }
+  .hero h1 em { font-style: normal; color: #FF8A94; }
+  .hero p.lead { font-size: 18px; max-width: 58ch; color: #C9D6E4; margin: 0 0 28px; }
+  .hero p.lead b { color: #fff; }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-block; font-family: "Archivo", sans-serif; font-weight: 700; font-size: 15px; text-decoration: none; border-radius: 8px; padding: 13px 22px; }
+  .btn-alert { background: var(--alert); color: #fff; }
+  .btn-alert:hover { background: #A81824; }
+  .btn-ghost { border: 1.5px solid #5F7A99; color: #DCE7F2; }
+  .btn-ghost:hover { border-color: #fff; color: #fff; }
+
+  /* ---------- status board (signature) ---------- */
+  .board { margin-top: -46px; }
+  .board-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 40px -18px rgba(15,34,56,.25); overflow: hidden; }
+  .board-head { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: .16em; color: var(--muted); }
+  .board-head b { color: var(--alert); }
+  .board-body { display: grid; grid-template-columns: 300px 1fr; }
+  .stats { display: grid; grid-template-rows: repeat(4, 1fr); border-right: 1px solid var(--line); }
+  .stat { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+  .stat:last-child { border-bottom: 0; }
+  .stat .num { font-family: var(--mono); font-weight: 600; font-size: 30px; line-height: 1.1; color: var(--alert); }
+  .stat.safe .num { color: var(--safe); }
+  .stat.plain .num { font-size: 19px; color: var(--ink); }
+  .stat .lbl { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  #map { min-height: 380px; }
+  .board-foot { padding: 11px 20px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+  @media (max-width: 760px) {
+    .board-body { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; border-right: 0; border-bottom: 1px solid var(--line); }
+    .stat { border-right: 1px solid var(--line); }
+  }
+
+  /* ---------- sections ---------- */
+  section { padding: 58px 0 8px; }
+  .sec-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; color: var(--alert); margin-bottom: 8px; }
+  section > .wrap > h2 { font-variation-settings: "wdth" 108; font-weight: 800; font-size: clamp(24px, 3.4vw, 34px); margin: 0 0 14px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+  @media (max-width: 820px) { .cols { grid-template-columns: 1fr; } }
+
+  .example-frame { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .example-frame img { width: 100%; border: 2px solid var(--alert); border-radius: 8px; display: block; }
+  .caption { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  .flag { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 15px; }
+  .flag .fmark { font-family: var(--mono); color: var(--alert); font-weight: 600; flex: 0 0 auto; }
+  table.ioc { border-collapse: collapse; width: 100%; font-size: 14px; margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .ioc th, .ioc td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+  .ioc th { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--muted); background: #F0F4F8; }
+  .ioc td:first-child { font-family: var(--mono); color: var(--alert-deep); font-weight: 500; }
+  .note { font-size: 13.5px; color: var(--muted); }
+
+  .kit { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 8px; }
+  .kit a.item { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s; }
+  .kit a.item:hover { border-color: var(--alert); transform: translateY(-2px); }
+  .kit .k-type { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--alert); }
+  .kit h3 { margin: 6px 0 6px; font-size: 17px; font-weight: 700; }
+  .kit p { margin: 0; font-size: 13.5px; color: var(--muted); }
+
+  .opensrc { margin-top: 18px; background: var(--safe-wash); border: 1px solid #BFDBD6; border-radius: 10px; padding: 12px 16px; font-size: 14px; }
+
+  form { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px; }
+  label { display: block; font-weight: 600; font-size: 14px; margin: 15px 0 5px; }
+  input, textarea, select { width: 100%; padding: 10px 12px; border: 1px solid #B9C6D3; border-radius: 8px; font: inherit; font-size: 14.5px; background: #FBFCFE; }
   textarea { min-height: 90px; }
-  button { margin-top: 18px; background: var(--red); color: #fff; border: 0; border-radius: 8px; padding: 12px 26px; font-size: 16px; font-weight: 600; cursor: pointer; }
-  button:hover { background: #911313; }
-  .privacy { background: #fff8e1; border: 1px solid #e6c860; border-radius: 8px; padding: 12px 16px; font-size: 13px; margin: 16px 0; }
-  ol li, ul li { margin: 5px 0; }
-  footer { margin-top: 50px; padding: 24px 0 40px; background: #f2f2f2; font-size: 13px; color: var(--grey); }
-  footer a { color: var(--red); }
-  .steps { background: #eef7f0; border: 1px solid #b9dcc0; border-radius: 10px; padding: 16px 22px; }
+  .submit { margin-top: 20px; background: var(--alert); color: #fff; border: 0; border-radius: 8px; padding: 13px 26px; font-family: "Archivo", sans-serif; font-weight: 700; font-size: 15.5px; cursor: pointer; }
+  .submit:hover { background: #A81824; }
+  .privacy { background: #FFF7E0; border: 1px solid #E8CF7E; border-radius: 10px; padding: 11px 15px; font-size: 13.5px; margin: 14px 0 4px; }
+
+  .steps { background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--alert); border-radius: 12px; padding: 20px 26px; }
+  .steps li { margin: 8px 0; }
+  ul.harden { columns: 2; column-gap: 40px; padding-left: 20px; }
+  ul.harden li { margin: 6px 0; break-inside: avoid; }
+  @media (max-width: 720px) { ul.harden { columns: 1; } }
+
+  footer { margin-top: 64px; background: var(--ink); color: #A9BCCE; font-size: 13.5px; padding: 30px 0 44px; }
+  footer a { color: #FFB3BA; }
+  footer .fmono { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; margin-bottom: 10px; color: #6F8AA6; }
 </style>
 </head>
 <body>
 
-<header>
+<div class="topbar">
   <div class="wrap">
-    <h1>⚠️ Dental Phish Watch</h1>
-    <p>An active phishing campaign is spreading clinic-to-clinic through Australian dentistry — sent from the <b>real email accounts of hacked colleagues</b>. This page shows you the pattern, collects sightings so affected clinics can be warned, and tells you what to do if you clicked.</p>
+    <a class="wordmark" href="#">DENTAL<span>PHISH</span>WATCH</a>
+    <div class="status-chip"><span class="pulse" aria-hidden="true"></span> ACTIVE CAMPAIGN · AU DENTAL</div>
   </div>
-</header>
+</div>
 
-<div class="wrap">
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">COMMUNITY SURVEILLANCE · RUN BY A PRACTICE THAT WAS HIT</div>
+    <h1>An infection is spreading through the dental referral network — <em>by email.</em></h1>
+    <p class="lead">Criminals are hijacking clinic mailboxes and sending <b>"shared a file with you"</b> emails to every practice that clinic knows. The sender is real, the address is real, and every clinic that clicks becomes the next carrier. Cross-infection control — but for your inbox.</p>
+    <div class="cta-row">
+      <a class="btn btn-alert" href="#protect">Get protected</a>
+      <a class="btn btn-ghost" href="#report">Report a sighting</a>
+    </div>
+  </div>
+</div>
 
-  <div class="tldr">
-    <b>TL;DR</b>
-    <ul>
-      <li>Email from a real colleague: <b>"[Clinic name] shared a file with you"</b>, styled like Microsoft/OneDrive, asking you to open it <b>on a desktop or laptop</b> — that instruction is the giveaway.</li>
-      <li>Link goes to a made-up domain ending in <b>.vu</b>. A new domain is used every wave. Often arrives at 3–6am (overseas attackers).</li>
-      <li>Clicking installs remote-control malware behind a fake "Windows Update" screen. Wipe-and-reinstall territory, not antivirus territory.</li>
-      <li><b>Verify by phone before opening any share link — even from someone you trust.</b> Never verify by email reply: the hacker answers it.</li>
+<!-- signature: outbreak status board -->
+<div class="board">
+  <div class="wrap">
+    <div class="board-card">
+      <div class="board-head"><b>◉</b>&nbsp; OUTBREAK STATUS BOARD — LIVE</div>
+      <div class="board-body">
+        <div class="stats" role="list">
+          <div class="stat" role="listitem"><div class="num" id="s-identified">–</div><div class="lbl">clinics with hijacked accounts identified</div></div>
+          <div class="stat safe" role="listitem"><div class="num" id="s-alerted">–</div><div class="lbl">of them alerted &amp; in recovery</div></div>
+          <div class="stat" role="listitem"><div class="num" id="s-reports">–</div><div class="lbl">detection reports received</div></div>
+          <div class="stat plain" role="listitem"><div class="num" id="s-last">–</div><div class="lbl">most recent detection</div></div>
+        </div>
+        <div id="map" aria-label="Map of approximate affected-clinic locations"></div>
+      </div>
+      <div class="board-foot">Locations rounded to ~10&nbsp;km and never named — affected clinics are victims and are contacted privately by phone. Figures update automatically as Phish Guard extensions and sighting reports come in.</div>
+    </div>
+  </div>
+</div>
+
+<section id="recognise">
+  <div class="wrap">
+    <div class="sec-eyebrow">RECOGNISE</div>
+    <h2>Every wave looks like this. Only the name and the link change.</h2>
+    <div class="cols">
+      <div>
+        <div class="example-frame">
+          <img src="email-example.png" alt="Example phishing email: fake Microsoft file-share card titled 'Dental Clinic Name shared a file with you' with an Open Document button">
+        </div>
+        <p class="caption">A real email from this campaign (July 2026), clinic name anonymised. Fake Microsoft share card, "Open Document" button, and the tell-tale "Desktop or Windows Laptop" instruction — because the malware behind it only runs on Windows, hidden by a fake Windows Update screen while a live intruder takes control.</p>
+      </div>
+      <div>
+        <div class="flag"><span class="fmark">▲</span><span>"Shared a file / folder with you" from a colleague — especially unexpected</span></div>
+        <div class="flag"><span class="fmark">▲</span><span>Link domain you don't recognise, often ending <b>.vu</b></span></div>
+        <div class="flag"><span class="fmark">▲</span><span>"Please open on your <b>desktop or Windows laptop</b>" — the single biggest giveaway</span></div>
+        <div class="flag"><span class="fmark">▲</span><span>Link only, no attachment; you're BCC'd ("undisclosed recipients")</span></div>
+        <div class="flag"><span class="fmark">▲</span><span>Arrived at a strange hour — 3–6am is common (overseas operators)</span></div>
+        <div class="flag" style="border-bottom:0"><span class="fmark">✆</span><span><b>The rule that beats every wave: phone the sender before opening any share link.</b> Never verify by replying — the intruder answers their email.</span></div>
+        <table class="ioc">
+          <tr><th>ATTACK DOMAIN (DO NOT VISIT)</th><th>WAVE</th></tr>
+          <tr><td>avernix&#8203;.vu&#8203;/access</td><td>early wave</td></tr>
+          <tr><td>uvanv&#8203;.vu</td><td>early wave</td></tr>
+          <tr><td>xornavo&#8203;.vu&#8203;/file</td><td>12 Jul 2026</td></tr>
+          <tr><td>lornica&#8203;.vu&#8203;/dental</td><td>16 Jul 2026</td></tr>
+          <tr><td>clientesetupdoc&#8203;.vu&#8203;/access</td><td>22 Jul 2026</td></tr>
+          <tr><td>docsecdental&#8203;.vu&#8203;/mesh</td><td>22 Jul 2026</td></tr>
+        </table>
+        <p class="note">A new domain is registered for every wave — recognise the pattern, not the address. Link scanners report these as "clean": the kit shows scanners a harmless decoy page.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="protect">
+  <div class="wrap">
+    <div class="sec-eyebrow">PROTECT</div>
+    <h2>The free protection kit</h2>
+    <div class="kit">
+      <a class="item" href="downloads/DO-NOT-OPEN-Poster.pdf" download>
+        <div class="k-type">POSTER · PDF</div>
+        <h3>DO NOT OPEN — front desk poster</h3>
+        <p>The example email with big red instructions. Print it, laminate it, pin it wherever email is checked.</p>
+      </a>
+      <a class="item" href="downloads/Staff-Training-Booklet-v2.docx" download>
+        <div class="k-type">TRAINING · WORD</div>
+        <h3>Staff training booklet</h3>
+        <p>A 15-minute team meeting: the attack, the red flags, what to do after a click. Add your practice name.</p>
+      </a>
+      <a class="item" href="downloads/dental-phish-guard-extension.zip" download>
+        <div class="k-type">EXTENSION · CHROME / EDGE</div>
+        <h3>Phish Guard browser extension</h3>
+        <p>Red warning banners on matching emails in Gmail &amp; Outlook web — and it feeds the status board above.</p>
+      </a>
+      <a class="item" href="downloads/dental-phish-guard-firefox.zip" download>
+        <div class="k-type">EXTENSION · FIREFOX</div>
+        <h3>Firefox build</h3>
+        <p>Same protection for Firefox. Install steps are in the IT guide.</p>
+      </a>
+      <a class="item" href="it-guide.html">
+        <div class="k-type">FOR YOUR IT PROVIDER</div>
+        <h3>IT setup guide</h3>
+        <p>Copy-paste Microsoft 365 &amp; Google Workspace mail rules (covers desktop Outlook and phones), router DNS filtering for every device, and the hardening checklist.</p>
+      </a>
+    </div>
+    <div class="opensrc">🔓 <b>Everything is open source</b> — <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">read every line on GitHub</a> before installing. No tracking, email contents never leave your machine, and the extension's optional detection reports are write-only: sender address and attack domains, nothing else, readable by no one but the coordinator.</div>
+  </div>
+</section>
+
+<section id="report">
+  <div class="wrap">
+    <div class="sec-eyebrow">REPORT</div>
+    <h2>Seen one? Report it — the sender is a victim who doesn't know yet.</h2>
+    <div class="cols">
+      <div>
+        <p>Every report does two jobs: the clinic whose account was hijacked gets a <b>private phone call</b> so they can lock the intruder out, and the new attack domain goes into the block lists, the browser extension, and takedown reports the same day.</p>
+        <p>Reports are reviewed by a person. Nothing is published automatically, and affected clinics are never named — the map above shows rounded locations only.</p>
+        <div class="privacy">🔒 <b>Privacy:</b> your report goes only to the site operator, for warning the affected clinic and reporting the infrastructure. Don't paste patient information into this form.</div>
+        <p class="note">Strongest evidence: the original email file. In Gmail: ⋮ menu → "Download message" — attach it to the pre-filled email this form opens.</p>
+      </div>
+      <form id="reportForm">
+        <label for="rName">Your name</label>
+        <input id="rName" required autocomplete="name">
+        <label for="rPractice">Your practice</label>
+        <input id="rPractice" required>
+        <label for="rContact">Your email or phone (for follow-up)</label>
+        <input id="rContact" required>
+        <label for="rSender">Sender shown on the phishing email</label>
+        <input id="rSender" placeholder="e.g. Example Dental <reception@exampledental.com.au>" required>
+        <label for="rDomain">Link address (don't click — hover or long-press to read it)</label>
+        <input id="rDomain" placeholder="e.g. somename.vu/access">
+        <label for="rWhen">When did it arrive? (3am timestamps are useful evidence)</label>
+        <input id="rWhen" placeholder="e.g. 23 July 2026, 3:41am">
+        <label for="rClicked">Did anyone click the link?</label>
+        <select id="rClicked">
+          <option>No</option>
+          <option>Yes — link opened only</option>
+          <option>Yes — something downloaded or a "Windows Update" screen appeared</option>
+          <option>Not sure</option>
+        </select>
+        <label for="rNotes">Anything else (subject line, wording…)</label>
+        <textarea id="rNotes"></textarea>
+        <button class="submit" type="submit">Open pre-filled report email</button>
+        <p class="note">Opens in your own mail program — you review exactly what's sent before pressing send.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="clicked">
+  <div class="wrap">
+    <div class="sec-eyebrow">RESPOND</div>
+    <h2>If someone clicked — do this now</h2>
+    <div class="steps">
+      <ol>
+        <li><b>Unplug that PC from the network / Wi-Fi immediately</b> and stop using it.</li>
+        <li><b>Wipe and reinstall Windows</b> on it. With a live intruder involved, antivirus "cleaning" cannot be trusted.</li>
+        <li>From a <b>different clean device</b>: change the email password, enable two-factor authentication, sign out all sessions.</li>
+        <li>Check mail settings for <b>forwarding rules and filters you didn't create</b>; confirm recovery email/phone unchanged; review connected apps.</li>
+        <li>Assume all browser-saved passwords on that PC are stolen — <b>change them all, banking first</b> (then Medicare/PRODA, HICAPS, practice software, suppliers). Call the bank if card details were saved.</li>
+        <li><b>Warn your contacts</b> — your account will be used to attack them next.</li>
+        <li>Patient data possibly accessed? Call your <b>indemnity provider</b> — the Notifiable Data Breaches scheme (OAIC) may apply.</li>
+        <li>Report at <a href="https://www.cyber.gov.au/report" rel="noopener">cyber.gov.au/report</a> and check practice bank accounts and recent invoices for tampering.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="harden">
+  <div class="wrap">
+    <div class="sec-eyebrow">HARDEN</div>
+    <h2>Make a click survivable — one afternoon of IT work</h2>
+    <ul class="harden">
+      <li><b>2FA on every mailbox, enforced</b> — the single control that stops your practice becoming the next sender.</li>
+      <li><b>Staff on standard (non-admin) Windows accounts</b> — blocks software installs, which blocks most payloads.</li>
+      <li>Application control: Smart App Control or AppLocker, plus Microsoft Defender ASR rules.</li>
+      <li>DNS filtering at the router (e.g. Quad9 <code>9.9.9.9</code>) — malicious sites fail to load on every device.</li>
+      <li>Mail rule quarantining links to risky endings like <code>.vu</code> — recipes in the <a href="it-guide.html">IT guide</a>.</li>
+      <li>Tested backups that practice PCs can't overwrite.</li>
+      <li><b>Referrers &amp; labs:</b> send documents as attachments or via Medical-Objects / HealthLink — never "download from my site" links.</li>
     </ul>
   </div>
-
-  <h2>What the email looks like</h2>
-  <div class="cols">
-    <div>
-      <img class="example" src="email-example.png" alt="Example phishing email: fake Microsoft file-share card titled 'Dental Clinic Name shared a file with you' with an Open Document button">
-      <div class="caption">A real email from this campaign (July 2026), clinic name anonymised. Every wave looks nearly identical — same fake Microsoft card, same "Open Document" button, same "Desktop or Windows Laptop" line. Only the clinic name and link change.</div>
-    </div>
-    <div>
-      <b>Red flags — any ONE of these means stop and phone the sender:</b>
-      <ul>
-        <li>"Shared a file/folder with you" — especially unexpected</li>
-        <li>Link domain you don't recognise, or ending in <b>.vu</b></li>
-        <li>"Please open on your desktop / Windows laptop"</li>
-        <li>Link only, no attachment; vague wording</li>
-        <li>BCC'd / "undisclosed recipients"; not addressed by name</li>
-        <li>Arrived at a strange hour (e.g. 3am)</li>
-      </ul>
-      <b>Domains seen so far (do not visit):</b>
-      <table>
-        <tr><th>Domain</th><th>Wave</th></tr>
-        <tr><td class="dom">avernix&#8203;.vu/access</td><td>early wave</td></tr>
-        <tr><td class="dom">uvanv&#8203;.vu</td><td>early wave</td></tr>
-        <tr><td class="dom">xornavo&#8203;.vu/file</td><td>12 Jul 2026</td></tr>
-        <tr><td class="dom">lornica&#8203;.vu/dental</td><td>16 Jul 2026</td></tr>
-        <tr><td class="dom">clientesetupdoc&#8203;.vu/access</td><td>22 Jul 2026</td></tr>
-        <tr><td class="dom">docsecdental&#8203;.vu/mesh</td><td>22 Jul 2026</td></tr>
-      </table>
-      <p class="note">Link scanners show these as "clean" — the kit shows scanners a harmless decoy page. A clean scan means nothing.</p>
-    </div>
-  </div>
-
-  <h2>Report a sighting</h2>
-  <p>Received one of these? Reporting it helps two ways: the sender clinic (whose account is hacked and probably doesn't know) gets warned by phone, and new attack domains get added to the block lists and reported for takedown. Reports are reviewed by a person — nothing is published automatically, and the affected clinic is never named publicly.</p>
-  <div class="privacy">🔒 <b>Privacy:</b> your report goes only to the site operator for the purpose of warning the affected clinic and reporting the attack infrastructure. Don't paste patient information into this form.</div>
-  <form id="reportForm">
-    <label for="rName">Your name</label>
-    <input id="rName" required>
-    <label for="rPractice">Your practice</label>
-    <input id="rPractice" required>
-    <label for="rContact">Your email or phone (in case follow-up is needed)</label>
-    <input id="rContact" required>
-    <label for="rSender">Sender shown on the phishing email (clinic name and email address)</label>
-    <input id="rSender" placeholder="e.g. Example Dental <reception@exampledental.com.au>" required>
-    <label for="rDomain">Link address in the email (do NOT click it — hover/long-press to read it, or type what it showed)</label>
-    <input id="rDomain" placeholder="e.g. somename.vu/access">
-    <label for="rWhen">When did it arrive? (date and time — early-morning timestamps are useful evidence)</label>
-    <input id="rWhen" placeholder="e.g. 23 July 2026, 3:41am">
-    <label for="rClicked">Did anyone click the link?</label>
-    <select id="rClicked">
-      <option>No</option>
-      <option>Yes — link opened only</option>
-      <option>Yes — something downloaded or a "Windows Update" screen appeared</option>
-      <option>Not sure</option>
-    </select>
-    <label for="rNotes">Anything else (subject line, wording, etc.)</label>
-    <textarea id="rNotes"></textarea>
-    <button type="submit">Send report</button>
-    <p class="note">Submitting opens a pre-filled email in your own mail program — you can review exactly what is sent before hitting send. If possible, also attach the original email (in Gmail: ⋮ menu → "Download message").</p>
-  </form>
-
-  <h2>Free protection kit — download and share</h2>
-  <ul>
-    <li><a href="downloads/DO-NOT-OPEN-Poster.pdf" download><b>DO NOT OPEN poster (PDF)</b></a> — print it and pin it wherever email is checked.</li>
-    <li><a href="downloads/Staff-Training-Booklet-v2.docx" download><b>Staff training booklet (Word)</b></a> — run it as a 15-minute team meeting; add your practice name.</li>
-    <li><a href="downloads/dental-phish-guard-extension.zip" download><b>Dental Phish Guard browser extension — Chrome &amp; Edge (zip)</b></a> — flags these emails in Gmail/Outlook web with a red warning banner. Unzip, then <code>chrome://extensions</code> (or <code>edge://extensions</code>) → enable Developer mode → "Load unpacked" → select the folder. The extension also (optionally — there's an off switch) reports detections to this site's coordinator so hacked clinics get a warning phone call; it sends the sender address and attack domains only, never your email contents.</li>
-    <li><a href="downloads/dental-phish-guard-firefox.zip" download><b>Firefox build (zip)</b></a> — same extension for Firefox (see the IT guide for install steps).</li>
-    <li><a href="it-guide.html"><b>IT setup guide</b></a> — copy-paste recipes for your IT provider: Microsoft 365 / Google Workspace mail rules (protects the Outlook desktop app and every phone), router DNS filtering that blocks these sites on every device, and the endpoint hardening checklist.</li>
-  </ul>
-  <p class="note">🔓 Everything here is <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">open source on GitHub</a> — anyone (including your IT provider) can read every line of the extension's code before installing it. No tracking, no email contents leave your machine, and the optional detection reports are write-only. Found a new attack domain? Open an issue on GitHub or use the report form above.</p>
-
-  <h2>If someone clicked — do this now</h2>
-  <div class="steps">
-    <ol>
-      <li><b>Unplug that PC from the network / Wi-Fi immediately</b> and stop using it.</li>
-      <li><b>Wipe and reinstall Windows</b> on it. With a live attacker involved, antivirus "cleaning" cannot be trusted.</li>
-      <li>From a <b>different clean device</b>: change the email password, enable two-factor authentication, sign out all sessions.</li>
-      <li>Check mail settings for <b>forwarding rules and filters you didn't create</b>; confirm recovery email/phone unchanged; review connected apps.</li>
-      <li>Assume all browser-saved passwords on that PC are stolen — <b>change them all, banking first</b> (then Medicare/PRODA, HICAPS, practice software, suppliers). Call the bank if card details were saved.</li>
-      <li><b>Warn your contacts</b> — your account will be used to attack them next.</li>
-      <li>Patient data possibly accessed? Call your <b>indemnity provider</b> — the Notifiable Data Breaches scheme (OAIC) may apply.</li>
-      <li>Report at <a href="https://www.cyber.gov.au/report" rel="noopener">cyber.gov.au/report</a> and check practice bank accounts / recent invoices for tampering.</li>
-    </ol>
-  </div>
-
-  <h2>Protect your practice (one afternoon of IT work)</h2>
-  <ul>
-    <li><b>2FA on every mailbox, enforced</b> — the single control that stops your account becoming the next launchpad.</li>
-    <li><b>Staff on standard (non-admin) Windows accounts</b> — blocks software installs, which blocks most of these payloads.</li>
-    <li>Application control (Smart App Control / AppLocker) + Microsoft Defender ASR rules.</li>
-    <li>DNS filtering at the router (e.g. Quad9 <span class="dom">9.9.9.9</span>); a mail rule quarantining links to risky endings like .vu.</li>
-    <li>Tested backups that practice PCs can't overwrite.</li>
-    <li><b>Referrers &amp; labs:</b> send documents as attachments or via clinical messaging platforms (Medical-Objects/HealthLink) — never "download from my site" links. Make the scam pattern stand out by convention.</li>
-  </ul>
-
-</div>
+</section>
 
 <footer>
   <div class="wrap">
-    Run by a dental practice that was hit by this attack, for the profession. Affected clinics are contacted privately and never named here.<br>
+    <div class="fmono">DENTAL PHISH WATCH · EST. JULY 2026</div>
+    Run by a dental practice that was hit by this attack, for the profession. Affected clinics are contacted privately and never named here.<br><br>
     Official reporting: <a href="https://www.cyber.gov.au/report" rel="noopener">ACSC ReportCyber</a> ·
     <a href="https://www.scamwatch.gov.au" rel="noopener">Scamwatch</a> ·
     <a href="https://www.oaic.gov.au" rel="noopener">OAIC (data breaches)</a> ·
-    <a href="https://safebrowsing.google.com/safebrowsing/report_phish/" rel="noopener">Report a phishing URL to Google</a><br>
-    This site gives general security guidance, not legal advice.
+    <a href="https://safebrowsing.google.com/safebrowsing/report_phish/" rel="noopener">Report a phishing URL to Google</a> ·
+    <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">GitHub</a><br>
+    General security guidance, not legal advice.
   </div>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  // Reports open a pre-filled email in the reporter's own mail client, so they see
-  // and control exactly what is sent. Set the operator address here:
-  const REPORT_EMAIL = "info@parkrddental.com.au";
+  // ---- live stats (aggregates only; the reports table itself is unreadable publicly) ----
+  const SB_URL = "https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/rpc/phishwatch_public_stats";
+  const SB_KEY = "sb_publishable_tQ22oNC5oYZ6r_dhLJhK3Q_XPDnfucA";
 
+  const map = L.map("map", { scrollWheelZoom: false, attributionControl: true }).setView([-37.95, 145.05], 9);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom: 12, minZoom: 4
+  }).addTo(map);
+
+  fetch(SB_URL, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: "{}" })
+    .then((r) => r.json())
+    .then((s) => {
+      document.getElementById("s-identified").textContent = s.clinics_identified;
+      document.getElementById("s-alerted").textContent = s.clinics_alerted;
+      document.getElementById("s-reports").textContent = s.reports_received;
+      document.getElementById("s-last").textContent = s.last_report || "—";
+      const pts = (s.map || []);
+      const bounds = [];
+      for (const p of pts) {
+        bounds.push([p.lat, p.lng]);
+        L.circleMarker([p.lat, p.lng], {
+          radius: 10 + 4 * Math.min(p.clinics, 5),
+          color: p.alerted >= p.clinics ? "#0F766E" : "#C81E2E",
+          weight: 2, fillColor: p.alerted >= p.clinics ? "#0F766E" : "#C81E2E", fillOpacity: 0.25
+        }).addTo(map).bindPopup(
+          `<b>${p.clinics} clinic${p.clinics > 1 ? "s" : ""} affected</b> in this area<br>` +
+          `${p.alerted} alerted &amp; recovering<br>` +
+          `<span style="color:#5B6B7C">Identities withheld — location rounded to ~10 km</span>`
+        );
+      }
+      if (bounds.length) map.fitBounds(bounds, { padding: [46, 46], maxZoom: 10 });
+    })
+    .catch(() => { document.querySelector(".board-foot").textContent = "Live figures are temporarily unavailable — the protection kit below still works."; });
+
+  // ---- report form: opens a pre-filled email the reporter reviews and sends ----
+  const REPORT_EMAIL = "info@parkrddental.com.au";
   document.getElementById("reportForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const v = (id) => document.getElementById(id).value.trim();
     const body = [
-      "PHISHING SIGHTING REPORT (Dental Phish Watch)",
-      "",
+      "PHISHING SIGHTING REPORT (Dental Phish Watch)", "",
       "Reporter: " + v("rName") + " — " + v("rPractice"),
-      "Contact: " + v("rContact"),
-      "",
+      "Contact: " + v("rContact"), "",
       "Phishing email sender (likely compromised account): " + v("rSender"),
       "Link/domain in email: " + v("rDomain"),
       "Received: " + v("rWhen"),
-      "Clicked? " + v("rClicked"),
-      "",
-      "Notes: " + v("rNotes"),
-      "",
-      "(If possible, attach the original email to this message — in Gmail: three-dot menu > Download message.)"
+      "Clicked? " + v("rClicked"), "",
+      "Notes: " + v("rNotes"), "",
+      "(If possible, attach the original email — in Gmail: three-dot menu > Download message.)"
     ].join("\n");
     location.href = "mailto:" + REPORT_EMAIL +
       "?subject=" + encodeURIComponent("Phishing sighting: " + v("rSender")) +
