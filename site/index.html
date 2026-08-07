@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dental Phish Watch — Advisory DPW-2026-001: phishing campaigns targeting Australian dental practices (.vu file-share malware and PRODA/HPOS credential theft)</title>
+<meta name="description" content="Security advisory for the Australian dental sector: compromised clinic mailboxes distributing folder-share phishing that installs remote-access malware, and a Services Australia PRODA/HPOS credential-theft campaign. Indicators, live statistics, free tools and recommended actions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --tint: #F5F6F8;
+    --ink: #1A1D21;
+    --muted: #5A6470;
+    --alert: #B01823;
+    --alert-wash: #FBEFF0;
+    --line: #D6DBE1;
+    --line-soft: #E7EAEE;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15.5px/1.65 "IBM Plex Sans", system-ui, sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 22px; }
+  a { color: var(--ink); text-decoration-color: #9AA4AF; text-underline-offset: 2px; }
+  a:hover { text-decoration-color: var(--ink); }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  code, .m { font-family: var(--mono); font-size: 88%; background: var(--tint); border: 1px solid var(--line-soft); padding: 1px 5px; border-radius: 3px; }
+
+  .masthead { border-bottom: 3px solid var(--ink); }
+  .sectionnav { position: sticky; top: 0; z-index: 1200; background: #fff; border-bottom: 1px solid var(--line); }
+  .sectionnav .wrap { display: flex; gap: 4px; overflow-x: auto; padding: 0 22px; }
+  .sectionnav a { font-family: var(--mono); font-size: 12px; letter-spacing: .05em; color: var(--muted); text-decoration: none; padding: 10px 12px; white-space: nowrap; border-bottom: 3px solid transparent; }
+  .sectionnav a:hover { color: var(--ink); }
+  .sectionnav a.hot { color: var(--alert); font-weight: 600; }
+  .starthere { border: 2px solid var(--ink); border-radius: 6px; margin: 26px 0 6px; }
+  .starthere-head { padding: 14px 20px 4px; }
+  .starthere-head .kicker { font-family: var(--mono); font-size: 11.5px; letter-spacing: .16em; color: var(--alert); font-weight: 600; }
+  .starthere-head p { margin: 6px 0 0; }
+  .starthere iframe { width: 100%; border: 0; display: block; }
+  .masthead .wrap { display: flex; align-items: baseline; gap: 16px; padding: 18px 22px 14px; flex-wrap: wrap; }
+  .masthead .org { font-family: var(--mono); font-weight: 500; font-size: 14px; letter-spacing: .08em; }
+  .masthead .role { font-size: 13px; color: var(--muted); }
+  .masthead .adv { margin-left: auto; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+
+  .advisory-head { padding: 34px 0 6px; }
+  h1 { font-size: 27px; line-height: 1.3; font-weight: 700; margin: 0 0 22px; max-width: 34ch; }
+  .meta { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 8px; }
+  .meta th, .meta td { text-align: left; padding: 7px 14px 7px 0; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  .meta th { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--muted); width: 190px; white-space: nowrap; }
+  .sev { display: inline-block; font-family: var(--mono); font-size: 12px; color: #fff; background: var(--alert); padding: 2px 9px; border-radius: 3px; letter-spacing: .06em; }
+
+  nav.toc { margin: 26px 0 4px; font-size: 14px; }
+  nav.toc ol { margin: 6px 0 0; padding-left: 26px; columns: 2; column-gap: 40px; }
+  nav.toc li { margin: 3px 0; }
+  @media (max-width: 640px) { nav.toc ol { columns: 1; } }
+
+  section { padding: 34px 0 2px; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  h2 .no { font-family: var(--mono); font-weight: 500; color: var(--muted); margin-right: 10px; font-size: 15px; }
+  h3 { font-size: 15.5px; font-weight: 600; margin: 22px 0 8px; }
+  p { margin: 0 0 13px; max-width: 74ch; }
+  li { margin: 4px 0; }
+  .muted { color: var(--muted); font-size: 13.5px; }
+
+  .figure { border: 1px solid var(--line); border-radius: 4px; margin: 18px 0; }
+  .figure .fig-caption { font-size: 13px; color: var(--muted); padding: 10px 14px; border-top: 1px solid var(--line-soft); }
+  .statgrid { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+  .statgrid .cell { padding: 14px 16px; border-right: 1px solid var(--line-soft); }
+  .statgrid .cell:last-child { border-right: 0; }
+  .statgrid .num { font-family: var(--mono); font-size: 24px; font-weight: 500; }
+  .statgrid .num.alert { color: var(--alert); }
+  .statgrid .lbl { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  @media (max-width: 680px) { .statgrid { grid-template-columns: 1fr 1fr; } .statgrid .cell { border-bottom: 1px solid var(--line-soft); } }
+  #map { height: 340px; }
+
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  .plain th, .plain td { text-align: left; padding: 7px 12px; border: 1px solid var(--line-soft); vertical-align: top; }
+  .plain th { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--muted); background: var(--tint); }
+  .plain td.ioc { font-family: var(--mono); font-size: 13px; }
+
+  .example { display: grid; grid-template-columns: 340px 1fr; gap: 26px; align-items: start; margin: 18px 0; }
+  .example img { width: 100%; border: 1px solid var(--line); border-radius: 3px; display: block; }
+  @media (max-width: 720px) { .example { grid-template-columns: 1fr; } }
+
+  .notice { background: var(--alert-wash); border: 1px solid #E4C2C5; border-left: 3px solid var(--alert); padding: 12px 16px; margin: 16px 0; font-size: 14.5px; max-width: none; }
+
+  ul.files { list-style: none; padding: 0; margin: 12px 0; border-top: 1px solid var(--line); }
+  ul.files li { margin: 0; padding: 11px 2px; border-bottom: 1px solid var(--line-soft); display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+  ul.files .ftype { font-family: var(--mono); font-size: 11.5px; color: var(--muted); flex: 0 0 150px; }
+  ul.files .fdesc { font-size: 13.5px; color: var(--muted); flex-basis: 100%; padding-left: 164px; }
+  @media (max-width: 640px) { ul.files .fdesc { padding-left: 0; } }
+
+  form { border: 1px solid var(--line); border-radius: 4px; padding: 22px; margin: 18px 0; background: var(--tint); }
+  label { display: block; font-weight: 600; font-size: 13.5px; margin: 14px 0 4px; }
+  input, textarea, select { width: 100%; padding: 8px 10px; border: 1px solid #B4BCC5; border-radius: 3px; font: inherit; font-size: 14px; background: #fff; }
+  textarea { min-height: 84px; }
+  .submit { margin-top: 18px; background: var(--ink); color: #fff; border: 0; border-radius: 3px; padding: 11px 22px; font: 600 14.5px "IBM Plex Sans", sans-serif; cursor: pointer; }
+  .submit:hover { background: #000; }
+
+  footer { margin-top: 56px; border-top: 3px solid var(--ink); padding: 22px 0 46px; font-size: 13.5px; color: var(--muted); }
+  footer .wrap p { max-width: none; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="org">DENTAL PHISH WATCH</span>
+    <span class="role">Sector security advisory — Australian dentistry</span>
+    <span class="adv">DPW-2026-001</span>
+  </div>
+</header>
+
+<nav class="sectionnav" aria-label="Sections">
+  <div class="wrap">
+    <a class="hot" href="#starthere">START HERE</a>
+    <a href="#indicators">SPOT THE EMAIL</a>
+    <a href="#selfcheck">CHECK YOUR PRACTICE</a>
+    <a href="#statistics">LIVE MAP</a>
+    <a href="#resources">FREE TOOLS &amp; HOW-TO</a>
+    <a href="#proda">PRODA SCAM</a>
+    <a href="#reporting">REPORT ONE</a>
+    <a href="technical.html">TECHNICAL</a>
+  </div>
+</nav>
+
+<div class="advisory-head">
+  <div class="wrap">
+    <h1>Phishing campaign distributing remote-access malware via compromised dental practice mailboxes</h1>
+    <table class="meta">
+      <tr><th>Status</th><td><span class="sev">ACTIVE</span></td></tr>
+      <tr><th>First observed</th><td>Mid-2026. Most recent file-share wave 28 July 2026; PRODA/HPOS credential campaign first seen 7 August 2026</td></tr>
+      <tr><th>Sector affected</th><td>Dental practices, Australia-wide (compromised senders identified to date in Victoria and New South Wales)</td></tr>
+      <tr><th>Threat type</th><td>Two campaigns: (a) business email compromise → file-share lure → remote-access trojan (Windows); (b) Services Australia impersonation → PRODA/HPOS credential theft</td></tr>
+      <tr><th>Last updated</th><td id="meta-updated">7 August 2026</td></tr>
+      <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 7).</td></tr>
+      <tr><th>Source code</th><td>All tooling and this site are open source for independent review: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a></td></tr>
+    </table>
+    <div class="starthere" id="starthere">
+      <div class="starthere-head">
+        <span class="kicker">START HERE — TWO QUICK QUESTIONS</span>
+        <p>Answer below and you'll get a plain-English checklist for your exact situation — whether you own a practice or work across several, and whether anything has been clicked. Nothing you answer is recorded. (Prefer a full page? <a href="triage.html">Open it separately</a>.)</p>
+      </div>
+      <iframe id="triageFrame" src="triage.html?embed=1" height="430" title="What should I do? — interactive triage"></iframe>
+    </div>
+    <nav class="toc" aria-label="Contents">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#summary">Summary</a></li>
+        <li><a href="#indicators">Indicators and example</a> <span class="muted">(incl. <a href="#proda">PRODA scam</a>)</span></li>
+        <li><a href="#statistics">Current statistics</a></li>
+        <li><a href="#selfcheck">How to tell if your practice is affected</a></li>
+        <li><a href="#actions">Recommended actions</a></li>
+        <li><a href="#resources">Resources</a></li>
+        <li><a href="#reporting">Reporting a sighting</a></li>
+        <li><a href="#response">Incident response after a click</a></li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<section id="summary">
+  <div class="wrap">
+    <h2><span class="no">1</span>Summary</h2>
+    <p>An ongoing phishing campaign is propagating between Australian dental practices through compromised email accounts. After gaining access to a clinic's mailbox, the operator sends "shared a file with you" emails to the clinic's correspondents. Because these messages originate from a genuine, previously trusted account, they pass SPF, DKIM and DMARC authentication and are rarely intercepted by spam filtering.</p>
+    <p>The linked pages deliver a remote-access trojan for Windows. During installation the malware displays a fake Windows Update screen; an infected machine observed by the issuing practice showed live hands-on-keyboard control by a remote operator. Follow-on activity has included repeat access attempts weeks after initial compromise.</p>
+    <div class="figure">
+      <img src="fake-update-screen.png" alt="Simulated fake Windows Update screen: black background, white text reading Working on updates 37% complete, Don't turn off your computer" style="width:100%;display:block">
+      <div class="fig-caption">Fig. 1a — What to watch for: a reconstruction of the fake "Windows Update" screen reported during infection. If a practice computer shows something like this unexpectedly — particularly just after a "shared file" link was opened, or with the mouse moving on its own — treat it as a live intrusion, not a real update. Simulated for awareness.</div>
+    </div>
+    <p>Each recipient practice that is compromised becomes a new distribution point to its own contact network. Compromised senders have been identified in both Victoria (a south-east Melbourne cluster consistent with propagation through local referral relationships) and New South Wales, indicating national reach: any practice that has ever corresponded with an affected clinic may be targeted regardless of state.</p>
+    <p>Link-scanning services return benign results for this infrastructure: the kit serves a decoy page to automated scanners. A "clean" URL scan is not evidence of safety for this campaign.</p>
+  </div>
+</section>
+
+<section id="indicators">
+  <div class="wrap">
+    <h2><span class="no">2</span>Indicators and example</h2>
+    <div class="example">
+      <div>
+        <img src="email-example.png" alt="Sample campaign email: imitation Microsoft file-share notification titled 'Dental Clinic Name shared a file with you' with an Open Document button">
+        <p class="muted" style="margin-top:8px">Fig. 1 — Campaign email received 23 July 2026 (sending clinic anonymised). Waves are near-identical: imitation Microsoft share card, "Open Document" button, instruction to open on a desktop computer.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Message characteristics</h3>
+        <ul>
+          <li>Subject of the form <i>"[Practice name] shared a file with you"</i>; sender is a real practice known to the recipient</li>
+          <li>Body styled as a Microsoft OneDrive/SharePoint share notification; single link, no attachment</li>
+          <li>Instruction to open the link on a <b>desktop or Windows laptop</b> (the payload targets Windows only)</li>
+          <li>Recipients concealed via BCC ("undisclosed recipients"); no personal salutation</li>
+          <li>Send times across five held samples run from 03:41 to 10:58 AEST — two outside business hours, three during. An odd-hours timestamp is a useful prompt, but <b>time of day is not a reliable test</b> and a normal timestamp is not reassurance</li>
+        </ul>
+        <h3>Network indicators</h3>
+        <table class="plain">
+          <tr><th>DOMAIN (do not visit)</th><th>OBSERVED</th></tr>
+          <tr><td class="ioc">avernix&#8203;.vu&#8203;/access</td><td>early wave</td></tr>
+          <tr><td class="ioc">uvanv&#8203;.vu</td><td>early wave</td></tr>
+          <tr><td class="ioc">xornavo&#8203;.vu&#8203;/file</td><td>12 Jul 2026</td></tr>
+          <tr><td class="ioc">lornica&#8203;.vu&#8203;/dental</td><td>16 Jul 2026</td></tr>
+          <tr><td class="ioc">clientesetupdoc&#8203;.vu&#8203;/access</td><td>23 Jul 2026</td></tr>
+          <tr><td class="ioc">docsecdental&#8203;.vu&#8203;/mesh</td><td>23 Jul 2026</td></tr>
+          <tr><td class="ioc">dytrix&#8203;.vu</td><td>24 Jul 2026</td></tr>
+          <tr><td class="ioc">bzlvaka&#8203;.vu&#8203;/access</td><td>28 Jul 2026</td></tr>
+          <tr><td class="ioc">dprvirz&#8203;.vu <span class="muted">(also doc.dprvirz&#8203;.vu)</span></td><td>31 Jul 2026</td></tr>
+          <tr><th colspan="2" style="background:#FBEFF0;color:#B01823">PRODA / HPOS CREDENTIAL CAMPAIGN</th></tr>
+          <tr><td class="ioc">verifications&#8203;.es&#8203;/verification/v333/v3</td><td>7 Aug 2026</td></tr>
+          <tr><td class="ioc">ghaspert&#8203;.com <span class="muted">(sender)</span></td><td>7 Aug 2026</td></tr>
+          <tr><td class="ioc">machsselbst&#8203;.com <span class="muted">(sender)</span></td><td>7 Aug 2026</td></tr>
+        </table>
+        <p class="muted">A newly registered domain is used for each wave. Detection should rely on the message pattern, not on any specific domain.</p>
+      </div>
+    </div>
+    <div class="notice"><b>Verification guidance:</b> before opening any unexpected file-share link — including from trusted colleagues — telephone the apparent sender on a known number and confirm they sent it. Do not verify by email reply: if the account is compromised, the operator controls the replies.</div>
+    <h3 id="proda">Related campaign: fake "PRODA / HPOS re-link" credential phishing</h3>
+    <p>A second campaign against the same sector, first seen 7 August 2026, impersonates <b>Services Australia</b>. The email claims your <b>PRODA</b> account is no longer linked to <b>HPOS</b> and must be "reconnected". Samples were received cold by a targeted Australian dental practice and forwarded to us for analysis; they used two throwaway sender domains within twelve minutes (<span class="m">ghaspert[.]com</span>, <span class="m">machsselbst[.]com</span>), and pointed every button — including link text reading <span class="m">servicesaustralia.gov.au/proda</span> — at <span class="m">verifications[.]es/verification/v333/v3</span>. This one steals PRODA logins rather than installing malware; a stolen PRODA login exposes Medicare/HPOS billing. The rule is identical: a genuine Services Australia link always ends in <b>.gov.au</b> — anything else is fake. Access PRODA only by typing <span class="m">proda.humanservices.gov.au</span> yourself, never via an emailed button. Our detection tools flag this campaign too.</p>
+  </div>
+</section>
+
+<section id="statistics">
+  <div class="wrap">
+    <h2><span class="no">3</span>Current statistics</h2>
+    <p>Figures are compiled from sighting reports and automated detections submitted by participating practices, and update as reports are received. Affected practices are treated as victims: they are notified privately by telephone and are not named. Map positions are rounded to approximately 10&nbsp;km.</p>
+    <div class="figure">
+      <div class="statgrid">
+        <div class="cell"><div class="num alert" id="s-identified">–</div><div class="lbl">practices with compromised accounts identified</div></div>
+        <div class="cell"><div class="num" id="s-alerted">–</div><div class="lbl">notified so far (notification in progress)</div></div>
+        <div class="cell"><div class="num" id="s-reports">–</div><div class="lbl">detection reports received</div></div>
+        <div class="cell"><div class="num" style="font-size:17px" id="s-last">–</div><div class="lbl">most recent detection</div></div>
+      </div>
+      <div id="map" aria-label="Map of approximate affected-practice locations"></div>
+      <div class="fig-caption" id="mapCaption">Fig. 2 — Approximate locations of identified compromised practices for which a location is known, shown where each sending practice is based. Local clusters follow referral networks, but identified senders span multiple states. Markers turn green once that practice has been contacted.</div>
+    </div>
+  </div>
+</section>
+
+<section id="selfcheck">
+  <div class="wrap">
+    <h2><span class="no">4</span>How to tell if your practice is affected</h2>
+    <p>There are two distinct questions: whether a practice computer is infected, and whether the practice mailbox is compromised and being used to attack others. Either can be true without the other, and a compromised mailbox usually produces no symptoms visible to its owner — most affected practices learn of it only when a colleague telephones to ask about a strange email.</p>
+    <h3>Signs a computer is infected</h3>
+    <ul>
+      <li>A staff member opened one of these links on a Windows machine, a download ran, or a <b>"Windows Update" screen appeared at an unusual time</b> (see Fig. 1a in section 1 for what it looks like) — treat the machine as compromised regardless of how it behaved afterwards.</li>
+      <li>Cursor movement or windows opening without input; the machine awake or busy when it should be idle.</li>
+      <li>Remote-access software the practice did not install — check installed programs and the system tray for tools such as AnyDesk, ScreenConnect/ConnectWise, Atera, RustDesk, or TeamViewer that nobody recognises.</li>
+      <li>Windows user accounts nobody created, or Microsoft Defender/antivirus found disabled.</li>
+    </ul>
+    <h3>Signs the practice mailbox is compromised</h3>
+    <ul>
+      <li><b>Colleagues contact you asking whether you sent them a shared file.</b> This is the most common discovery route — take every such call seriously.</li>
+      <li>Bounce or "undeliverable" messages for emails the practice never sent.</li>
+      <li>Mailbox rules the practice did not create — particularly rules forwarding mail externally, or moving replies to rarely viewed folders to hide them. (Operators typically delete their sent messages, so an empty Sent folder proves nothing.)</li>
+      <li>Sign-in alerts or session activity from unfamiliar locations or devices.</li>
+      <li>Changed recovery details, unfamiliar "app passwords", or third-party applications with mailbox access that nobody authorised.</li>
+    </ul>
+    <h3>Practice-wide mailbox sweep</h3>
+    <p>Have one person search the practice mailbox — including archived mail, not just the inbox — with:</p>
+    <p><code>"shared a file with you" OR "shared a folder with you" OR "invitation to view shared"</code></p>
+    <p>Then run a second search for the government-impersonation campaign — the first search will not find it:</p>
+    <p><code>"PRODA" OR "HPOS" OR "Provider Digital Access"</code></p>
+    <p>Treat a match from the second search as suspect if it carries Services Australia branding and a sign-in button that is not a <code>.gov.au</code> address.</p>
+    <p>The same phrase searches work in Gmail and Outlook. Suspect matches from the first search carry the indicators in section 2: real clinic as sender, single link with no attachment, unusual domain, an instruction to open on a desktop computer, odd send times. Then ask every staff member, openly and without blame, whether anyone opened such a link and whether any machine has shown the symptoms above. The flowchart below walks a practice through the outcomes; a printable copy is in section 6.</p>
+    <div class="figure">
+      <a href="downloads/Staff-Sweep-Flowchart.pdf"><img src="sweep-flowchart.png" alt="Flowchart: search the mailbox for share-lure phrases; if matches are found, question staff; branch to contain-and-report, precautionary lockdown, or full incident response depending on answers" style="width:100%;display:block"></a>
+      <div class="fig-caption">Fig. 3 — Staff sweep procedure. Click to open the printable A4 version.</div>
+    </div>
+    <h3>Ten-minute self-check</h3>
+    <ol>
+      <li><b>Gmail accounts:</b> run the Security Checkup at <code>myaccount.google.com/security</code> (devices, recent activity, third-party access); in Gmail settings review <i>Forwarding and POP/IMAP</i> and <i>Filters and blocked addresses</i>; click <i>Details</i> at the bottom-right of the inbox for recent session activity.</li>
+      <li><b>Microsoft 365 / Outlook:</b> review sign-in activity at <code>account.microsoft.com</code> (or Entra sign-in logs, if administered); in Outlook settings review <i>Mail → Rules</i> and <i>Forwarding</i>; administrators can run a message trace for unexpected outbound volume.</li>
+      <li>Search Sent and Deleted Items for <i>"shared a file"</i>.</li>
+      <li>Review installed programs on each Windows machine for the remote-access tools listed above.</li>
+      <li>Ask staff directly whether anyone has opened a file-share link recently. A no-blame framing gets truthful answers; minutes matter more than fault.</li>
+    </ol>
+    <p>If any indicator above is present, proceed to section 8 (incident response) and report via section 7. If in doubt, treat the mailbox as compromised — a password change with multi-factor enrolment costs minutes; a missed compromise costs weeks.</p>
+  </div>
+</section>
+
+<section id="actions">
+  <div class="wrap">
+    <h2><span class="no">5</span>Recommended actions</h2>
+    <h3>All staff</h3>
+    <ul>
+      <li>Treat any unexpected "shared a file/folder" email as suspect regardless of sender; verify by telephone before opening links.</li>
+      <li>Do not open share links on a practice computer because the message requests it; that instruction is itself an indicator.</li>
+      <li>Report suspect messages to the practice owner or manager, and via section 7 below.</li>
+    </ul>
+    <h3>Practice owners and IT providers</h3>
+    <ul>
+      <li>Enforce multi-factor authentication on all practice mailboxes. This is the control that prevents a practice becoming a distribution point.</li>
+      <li>Operate staff workstations as standard (non-administrator) Windows accounts; apply application control (Smart App Control or AppLocker) and Microsoft Defender attack surface reduction rules.</li>
+      <li>Apply a mail-transport rule quarantining or tagging messages containing links to high-risk top-level domains such as <code>.vu</code>. Configurations for Microsoft 365 and Google Workspace are provided in the <a href="it-guide.html">IT configuration guide</a>.</li>
+      <li>Use filtered DNS at the practice router (for example Quad9, <code>9.9.9.9</code>) so known-malicious domains fail to resolve on all devices.</li>
+      <li>Maintain offline or version-protected backups, and disable browser password storage on shared workstations.</li>
+      <li>When corresponding between practices, send documents as attachments or via clinical messaging platforms (Medical-Objects, HealthLink) rather than links to external download sites.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="wrap">
+    <h2><span class="no">6</span>Resources</h2>
+    <ul class="files">
+      <li><span class="ftype">PDF · A4 poster</span> <a href="downloads/DO-NOT-OPEN-Poster.pdf" download>"Do not open" staff notice</a>
+        <span class="fdesc">The sample email with identification and response instructions, for display where email is checked. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/poster.html" rel="noopener">Source on GitHub</a></span></li>
+      <li><span class="ftype">WEB · interactive</span> <a href="triage.html">"What should I do?" triage</a>
+        <span class="fdesc">Guided questions producing a personalised checklist — separate paths for practice owners (containment, diagnosis, incident response) and associates (saved logins, personal-account exposure). <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/site/triage.html" rel="noopener">Source on GitHub</a></span></li>
+      <li><span class="ftype">PDF · A4 flowchart</span> <a href="downloads/Staff-Sweep-Flowchart.pdf" download>Staff mailbox-sweep flowchart</a>
+        <span class="fdesc">The search query and decision tree from section 4, formatted for printing and team meetings. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/sweep-flowchart.html" rel="noopener">Source on GitHub</a></span></li>
+      <li><span class="ftype">DOCX · booklet</span> <a href="downloads/Staff-Training-Booklet-v2.docx" download>Staff training booklet</a>
+        <span class="fdesc">Attack description, indicators, and post-click procedure, suitable for a 15-minute staff meeting. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/Staff-Training-Booklet-v2.docx" rel="noopener">Same file on GitHub</a></span></li>
+      <li><span class="ftype">ZIP · Chrome/Edge</span> <a href="downloads/dental-phish-guard-extension.zip" download>Phish Guard browser extension</a>
+        <span class="fdesc">Displays a warning banner on messages matching campaign indicators in Gmail and Outlook on the web; optionally submits detections to this advisory's statistics (sender address and domains only — message content is never transmitted). <a href="https://github.com/DentaSuite/dental-phish-guard/tree/main/extension" rel="noopener">Read the code on GitHub before installing</a></span></li>
+      <li><span class="ftype">ZIP · Firefox</span> <a href="downloads/dental-phish-guard-firefox.zip" download>Phish Guard for Firefox</a>
+        <span class="fdesc">Installation steps are in the IT configuration guide. <a href="https://github.com/DentaSuite/dental-phish-guard/tree/main/extension-firefox" rel="noopener">Read the code on GitHub</a></span></li>
+      <li><span class="ftype">HTML · analysis</span> <a href="technical.html">Technical analysis</a>
+        <span class="fdesc">For IT providers and security researchers: attack chain, header evidence, infrastructure patterns, detection heuristics, open questions, and how to contribute intelligence or ideas.</span></li>
+      <li><span class="ftype">HTML · guide</span> <a href="it-guide.html">IT configuration guide</a>
+        <span class="fdesc">Mail-transport rules for Microsoft 365 and Google Workspace (these also protect the Outlook desktop application and mobile devices), DNS filtering, and workstation hardening. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/site/it-guide.html" rel="noopener">Source on GitHub</a></span></li>
+    </ul>
+    <h3>How to install the Phish Guard extension (about two minutes)</h3>
+    <p>Download the extension zip above, right-click it and choose <b>Extract All</b> (remember where the folder goes — usually Downloads), then:</p>
+    <div class="figure">
+      <img src="install-steps.png" alt="Four steps: open chrome://extensions, switch on Developer mode, click Load unpacked and choose the extracted folder, extension appears in the list" style="width:100%;display:block">
+      <div class="fig-caption">Fig. 4 — Installing in Chrome. In Microsoft Edge the address is edge://extensions; every other step is identical. Repeat on each computer that checks email.</div>
+    </div>
+    <h3>What it does once installed</h3>
+    <p>Nothing, most of the time — it sits quietly. But when an email matching this attack is opened in Gmail or Outlook web, a red warning appears above the message before anyone can click, spelling out exactly why it's dangerous:</p>
+    <div class="figure">
+      <img src="extension-banner.png" alt="A phishing email in webmail with the extension's red DANGER banner above it listing the reasons it was flagged" style="width:100%;display:block">
+      <div class="fig-caption">Fig. 5 — A live capture of the extension flagging a demonstration email. It also keeps a private list of which clinics sent flagged emails (click its toolbar icon) so they can be phoned and warned, and — unless you switch it off in that popup — sends the sender address and attack domains (never the email itself) to this advisory's statistics.</div>
+    </div>
+    <h3>Using the printed materials</h3>
+    <p>Print the <b>poster</b> and the <b>sweep flowchart</b> on A4 and put them where email is actually read — the front desk and the staff room, not the filing cabinet. Open the <b>booklet</b> in Word, type your practice name on the cover, print a copy per staff member, and walk through it at a team meeting — it takes about 15 minutes and reception staff are the most important audience. The <b>IT guide</b> isn't for you: forward it to whoever looks after your computers with the message "please do these and confirm in writing".</p>
+    <p class="muted">Everything above, including this site itself, is published in full at <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a> so you or your IT provider can verify exactly what it does before installing. Detection reports are write-only; submitted data is readable only by the advisory coordinator.</p>
+  </div>
+</section>
+
+<section id="reporting">
+  <div class="wrap">
+    <h2><span class="no">7</span>Reporting a sighting</h2>
+    <p>Reports serve two purposes: the practice whose account was compromised is notified privately by telephone, and new infrastructure is added to the indicator list, the browser extension, and takedown requests. Reports are reviewed individually; nothing is published automatically and reporting practices are not named.</p>
+    <p class="muted">The most useful evidence is the original message file. In Gmail: message menu (⋮) → "Download message". Attach it to the pre-filled email this form produces. Do not include patient information.</p>
+    <form id="reportForm">
+      <label for="rName">Name</label>
+      <input id="rName" required autocomplete="name">
+      <label for="rPractice">Practice</label>
+      <input id="rPractice" required>
+      <label for="rContact">Contact email or telephone</label>
+      <input id="rContact" required>
+      <label for="rSender">Sender shown on the suspect email</label>
+      <input id="rSender" placeholder="e.g. Example Dental <reception@exampledental.com.au>" required>
+      <label for="rDomain">Link address, if determinable without clicking (hover or long-press to read)</label>
+      <input id="rDomain" placeholder="e.g. somename.vu/access">
+      <label for="rWhen">Date and time received</label>
+      <input id="rWhen" placeholder="e.g. 23 July 2026, 3:41 am">
+      <label for="rClicked">Was the link opened?</label>
+      <select id="rClicked">
+        <option>No</option>
+        <option>Yes — link opened only</option>
+        <option>Yes — a download occurred or a "Windows Update" screen appeared</option>
+        <option>Not sure</option>
+      </select>
+      <label for="rNotes">Additional details</label>
+      <textarea id="rNotes"></textarea>
+      <button class="submit" type="submit">Prepare report email</button>
+      <p class="muted" style="margin-top:10px">Submitting opens a pre-filled message in your own mail application for review before sending.</p>
+    </form>
+  </div>
+</section>
+
+<section id="response">
+  <div class="wrap">
+    <h2><span class="no">8</span>Incident response after a click</h2>
+    <ol>
+      <li>Disconnect the affected computer from the network immediately and cease using it. Containment is achieved at this point — the remaining steps are not a race.</li>
+      <li><b>Before anything is wiped, notify your indemnity or cyber insurer.</b> Many policies require the insurer's consent before remediation and will appoint the responder; wiping first can prejudice cover and destroys the only evidence for the data-breach assessment. Take a disk image, or remove the drive and set the machine aside intact.</li>
+      <li>Reimage the machine (wipe and reinstall Windows). Antivirus remediation alone is insufficient where interactive remote access has occurred. Do not wipe until the disk is imaged or your insurer confirms you may proceed.</li>
+      <li>From a separate, known-clean device, evict the intruder from the mailbox <b>in this order</b> — a password change alone does not remove them:
+        <ol type="a">
+          <li>reset the password;</li>
+          <li>revoke all active sessions and refresh tokens (sign out everywhere);</li>
+          <li>delete every app password;</li>
+          <li>revoke every third-party or OAuth application with mailbox access that you did not authorise — these survive a password reset;</li>
+          <li>review registered multi-factor methods and <b>delete any phone, email or authenticator you do not recognise</b> before enrolling your own; simply "turning on 2FA" can cement an attacker's device;</li>
+          <li>delete unrecognised inbox rules, forwarding addresses and auto-replies, and confirm recovery contact details are unchanged.</li>
+        </ol>
+        Check these at the server level too, not only in the mail app: Exchange admin centre → Recipients → Mailboxes → mail flow settings (forwarding) and Mailbox delegation; or Gmail → Settings → Accounts and Import → "Grant access to your account", plus any admin-console routing rules.</li>
+      <li>Treat all credentials stored in browsers on the affected machine as compromised. Change them, beginning with banking, then Medicare/PRODA, HICAPS, practice management and supplier accounts. Notify the bank if payment details were stored.</li>
+      <li>Advise correspondents that mail from the practice's address may be malicious.</li>
+      <li>If patient information may have been accessed, you are the entity with the notification obligation — not your IT provider and not your software vendor. Under the Notifiable Data Breaches scheme you must complete a reasonable and expeditious assessment <b>within 30 days</b> of becoming aware, and notify the OAIC and affected patients if serious harm is likely. Involve your indemnity provider immediately; note that professional indemnity and cyber cover are different products and you may hold one without the other.</li>
+      <li>Report the incident to the ACSC at <a href="https://www.cyber.gov.au/report" rel="noopener">cyber.gov.au/report</a>, and review practice bank accounts and recent invoices for unauthorised changes.</li>
+      <li><b>If the incident involved the PRODA/HPOS lure rather than the file-share malware</b> — that is, someone entered credentials on a fake Services Australia page — reimaging is not the priority and the steps above are the wrong ones. Follow the PRODA checklist instead: <a href="triage.html#out_proda_creds">what to do if PRODA details were entered</a>.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Created and maintained by <b>Dr James Lee</b>, a Victorian dentist whose practice was affected by this campaign, for the benefit of the profession. General security guidance, not legal advice. Affected practices are notified privately and not identified.</p>
+    <p>External reporting: <a href="https://www.cyber.gov.au/report" rel="noopener">ACSC ReportCyber</a> · <a href="https://www.scamwatch.gov.au" rel="noopener">Scamwatch</a> · <a href="https://www.oaic.gov.au" rel="noopener">OAIC</a> · <a href="https://safebrowsing.google.com/safebrowsing/report_phish/" rel="noopener">Google Safe Browsing</a> · Source: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">GitHub</a> · <a href="technical.html">Technical analysis &amp; contact</a></p>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  const SB_URL = "https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/rpc/phishwatch_public_stats";
+  const SB_KEY = "sb_publishable_tQ22oNC5oYZ6r_dhLJhK3Q_XPDnfucA";
+
+  const map = L.map("map", { scrollWheelZoom: false }).setView([-37.95, 145.05], 9);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom: 12, minZoom: 4
+  }).addTo(map);
+
+  fetch(SB_URL, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: "{}" })
+    .then((r) => r.json())
+    .then((s) => {
+      document.getElementById("s-identified").textContent = s.clinics_identified;
+      document.getElementById("s-alerted").textContent = s.clinics_alerted;
+      document.getElementById("s-reports").textContent = s.reports_received;
+      document.getElementById("s-last").textContent = s.last_report || "—";
+      const bounds = [];
+      for (const p of (s.map || [])) {
+        bounds.push([p.lat, p.lng]);
+        L.circleMarker([p.lat, p.lng], {
+          radius: 9 + 3 * Math.min(p.clinics, 5),
+          color: p.alerted > 0 ? "#3D6B54" : "#B01823",
+          weight: 1.5, fillColor: p.alerted > 0 ? "#3D6B54" : "#B01823", fillOpacity: 0.2
+        }).addTo(map).bindPopup(
+          `${p.clinics} practice${p.clinics > 1 ? "s" : ""} affected in this area; ${p.alerted} notified.<br>` +
+          `<span style="color:#5A6470">Identity withheld — position rounded to ~10 km.</span>`
+        );
+      }
+      if (bounds.length) map.fitBounds(bounds, { padding: [44, 44], maxZoom: 10 });
+    })
+    .catch(() => { document.getElementById("mapCaption").textContent = "Fig. 2 — Live figures temporarily unavailable."; });
+
+  // Anonymous usage counters (counts only — no identities, no answers).
+  const pgEvent = (kind, detail) => fetch("https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_events", {
+    method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json", prefer: "return=minimal" },
+    body: JSON.stringify({ kind, detail })
+  }).catch(() => {});
+  pgEvent("page_view", location.pathname);
+  document.querySelectorAll("a[download]").forEach((a) =>
+    a.addEventListener("click", () => pgEvent("download", a.getAttribute("href").split("/").pop())));
+
+  // Same-origin iframe: grow the embedded triage to fit its content.
+  const tf = document.getElementById("triageFrame");
+  setInterval(() => {
+    try {
+      const h = tf.contentDocument?.body?.scrollHeight;
+      if (h && Math.abs(h - tf.clientHeight) > 8) tf.style.height = (h + 24) + "px";
+    } catch { /* not loaded yet */ }
+  }, 400);
+
+  const REPORT_EMAIL = "info@parkrddental.com.au";
+  document.getElementById("reportForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = (id) => document.getElementById(id).value.trim();
+    const body = [
+      "PHISHING SIGHTING REPORT (Dental Phish Watch, DPW-2026-001)", "",
+      "Reporter: " + v("rName") + " — " + v("rPractice"),
+      "Contact: " + v("rContact"), "",
+      "Suspect email sender: " + v("rSender"),
+      "Link/domain: " + v("rDomain"),
+      "Received: " + v("rWhen"),
+      "Link opened? " + v("rClicked"), "",
+      "Notes: " + v("rNotes"), "",
+      "(If possible, attach the original message file — Gmail: message menu > Download message.)"
+    ].join("\n");
+    location.href = "mailto:" + REPORT_EMAIL +
+      "?subject=" + encodeURIComponent("Phishing sighting report: " + v("rSender")) +
+      "&body=" + encodeURIComponent(body);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Phish Guard detection tests</title>
+  <link rel="stylesheet" href="banner.css">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 780px; margin: 30px auto; padding: 0 16px; }
+    .msg { border: 1px solid #ccc; padding: 14px; border-radius: 8px; margin-bottom: 22px; }
+    h2 { font-size: 15px; margin: 24px 0 8px; }
+    h2 .tag { font-family: ui-monospace, monospace; font-size: 11px; padding: 2px 7px; border-radius: 3px; }
+    .must { background: #fbe9eb; color: #b01823; }
+    .never { background: #eaf2ee; color: #3d6b54; }
+    #summary { position: sticky; top: 0; background: #1a1d21; color: #fff; padding: 10px 14px; border-radius: 6px;
+               font-family: ui-monospace, monospace; font-size: 13px; white-space: pre; z-index: 10; }
+  </style>
+</head>
+<body>
+  <div id="summary">running…</div>
+
+  <!-- ============ MUST FLAG ============ -->
+
+  <h2><span class="tag must">MUST FLAG</span> 1 — known attack domain, folder-share lure</h2>
+  <div class="msg pg-test-message" id="known">
+    <p>Hi, I have shared a folder with you containing the patient referral documents.</p>
+    <p>Please review here: <a href="https://xornavo.vu/file/">Open shared folder (OneDrive)</a></p>
+    <p>Note: please open on a desktop or laptop, the viewer does not work on mobile.</p>
+  </div>
+
+  <h2><span class="tag must">MUST FLAG</span> 2 — unknown fresh .vu domain, same pattern</h2>
+  <div class="msg pg-test-message" id="freshwave">
+    <p>Dr Smith has shared a file with you.</p>
+    <p><a href="https://kelvora.vu/access/">View shared documents</a></p>
+    <p>Best opened on your computer.</p>
+  </div>
+
+  <h2><span class="tag must">MUST FLAG</span> 3 — replica of a real captured sample (practice anonymised)</h2>
+  <div class="msg pg-test-message" id="realsample">
+    <h3>Example Dental shared a file with you</h3>
+    <p><b>Example Dental</b> shared <b>"EXAMPLE DENTAL ACKNOWLEDGEMENT DOC"</b> with you.</p>
+    <p>For security reasons, please view this document using your <b>Desktop or Windows Laptop.</b></p>
+    <p><a href="https://docsecdental.vu/mesh">EXAMPLE DOCUMENT.DOCX</a></p>
+    <p><a href="https://docsecdental.vu/mesh">Open Document</a></p>
+    <p>Microsoft <a href="https://clientesetupdoc.vu/access">Privacy Statement</a></p>
+  </div>
+
+  <h2><span class="tag must">MUST FLAG</span> 4 — evasion: attacker moves off .vu to a .com</h2>
+  <div class="msg pg-test-message" id="evasion">
+    <p>Dr Jones has shared a folder with you.</p>
+    <p><a href="https://secureportaldocs.com/view">Open shared documents</a></p>
+    <p>Please view on your desktop or laptop.</p>
+  </div>
+
+  <h2><span class="tag must">MUST FLAG</span> 5 — later wave, different lure wording</h2>
+  <div class="msg pg-test-message" id="laterwave">
+    <h3>Invitation to view shared folders</h3>
+    <p>You have been invited to view shared folders.</p>
+    <p><a href="https://bzlvaka.vu/access/">Open</a></p>
+  </div>
+
+  <h2><span class="tag must">MUST FLAG</span> 6 — PRODA / Services Australia impersonation</h2>
+  <div class="msg pg-test-message" id="proda">
+    <p>This is an automated notification from Services Australia. Please do not reply to this email.</p>
+    <p>Your Provider Digital Access (PRODA) account is currently not linked to Health Professional Online Services (HPOS). To restore your connection with HPOS, please sign in.</p>
+    <p><a href="https://verifications.es/verification/v333/v3">Reconnect PRODA</a></p>
+    <p>or visit <a href="https://verifications.es/verification/v333/v3">servicesaustralia.gov.au/proda</a></p>
+  </div>
+
+  <!-- ============ MUST NOT FLAG ============ -->
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 7 — genuine OneDrive share, filename as link text</h2>
+  <div class="msg pg-test-message" id="genuineshare">
+    <p>Hi, I have shared a file with you on OneDrive.</p>
+    <p><a href="https://1drv.ms/b/s!AbCdEf">Perio Referral - J Smith.pdf</a></p>
+  </div>
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 8 — ordinary practice email</h2>
+  <div class="msg pg-test-message" id="plain">
+    <p>Hi team, reminder that the staff meeting is at 1pm Thursday. Agenda attached.</p>
+  </div>
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 9 — software vendor discussing PRODA/HPOS</h2>
+  <div class="msg pg-test-message" id="vendorproda">
+    <p>Release notes: you can now link your PRODA account to HPOS services directly from the claiming module.</p>
+    <p><a href="https://support.dental4windows.com.au/releases/2026-08">Read the release notes</a></p>
+  </div>
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 10 — genuine Services Australia notice (gov link + social footer)</h2>
+  <div class="msg pg-test-message" id="realgov">
+    <p>Your PRODA account requires attention. Please sign in to PRODA to review your details.</p>
+    <p><a href="https://proda.humanservices.gov.au/">Sign in to PRODA</a></p>
+    <p>Follow us on <a href="https://www.facebook.com/servicesaustralia">Facebook</a></p>
+  </div>
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 11 — a phishing warning being forwarded around</h2>
+  <div class="msg pg-test-message" id="advisory">
+    <p>WARNING: a phishing campaign is hitting dental practices. Emails claim someone has shared a file with you and ask you to open the link on your desktop or Windows laptop. Do not click. Domains seen include xornavo.vu and verifications.es.</p>
+    <p>More at <a href="https://phishwatch.parkrddental.com.au/">phishwatch.parkrddental.com.au</a></p>
+  </div>
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 12 — genuine SharePoint share rewritten by a mail gateway</h2>
+  <div class="msg pg-test-message" id="gateway">
+    <p>Dr Chen has shared a file with you.</p>
+    <p><a href="https://protect-au.mimecast.com/s/abc123?domain=contoso.sharepoint.com">Open in SharePoint</a></p>
+  </div>
+
+  <h2><span class="tag never">MUST NOT FLAG</span> 13 — lab email referencing a .zip case file</h2>
+  <div class="msg pg-test-message" id="labzip">
+    <p>Your cases for this week are ready for download from our portal.</p>
+    <p><a href="https://portal.examplelab.com.au/downloads">cases-august.zip</a></p>
+  </div>
+
+  <script src="rules.js"></script>
+  <script src="content.js"></script>
+  <script>
+    const MUST_FLAG = ["known", "freshwave", "realsample", "evasion", "laterwave", "proda"];
+    const NEVER_FLAG = ["genuineshare", "plain", "vendorproda", "realgov", "advisory", "gateway", "labzip"];
+    setTimeout(() => {
+      const out = {};
+      let pass = 0, fail = 0;
+      const lines = [];
+      for (const [ids, want] of [[MUST_FLAG, true], [NEVER_FLAG, false]]) {
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          const r = window.__pgAnalyzeMessage(el);
+          const flagged = r.score >= 40;
+          const ok = flagged === want;
+          ok ? pass++ : fail++;
+          out[id] = { want, flagged, score: r.score, reasons: r.reasons };
+          lines.push(`${ok ? "PASS" : "FAIL"}  ${id.padEnd(13)} want=${want ? "flag " : "clean"} score=${String(r.score).padStart(3)}${ok ? "" : "   <<< " + r.reasons.join(" | ")}`);
+        }
+      }
+      const head = `${fail === 0 ? "ALL PASS" : fail + " FAILURE(S)"}   (${pass} passed, ${fail} failed)`;
+      document.getElementById("summary").textContent = head + "\n" + lines.join("\n");
+      window.__pgResults = out;
+      console.log("PG_RESULTS " + JSON.stringify({ pass, fail, out }));
+    }, 600);
+  </script>
+</body>
+</html>
