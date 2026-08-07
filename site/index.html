@@ -20,6 +20,8 @@
     --line: #D6DBE1;
     --line-soft: #E7EAEE;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --camp-a: #B01823;
+    --camp-b: #8A4B08;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink); font: 15.5px/1.65 "IBM Plex Sans", system-ui, sans-serif; }
@@ -85,6 +87,23 @@
   .example img { width: 100%; border: 1px solid var(--line); border-radius: 3px; display: block; }
   @media (max-width: 720px) { .example { grid-template-columns: 1fr; } }
 
+  .camps { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 20px 0 6px; }
+  @media (max-width: 760px) { .camps { grid-template-columns: 1fr; } }
+  .camp { border: 1px solid var(--line); border-top: 5px solid var(--camp-a); border-radius: 5px; padding: 0 0 14px; }
+  .camp.b { border-top-color: var(--camp-b); }
+  .camp .badge { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: #fff; background: var(--camp-a); padding: 5px 16px; }
+  .camp.b .badge { background: var(--camp-b); }
+  .camp h3 { margin: 12px 16px 4px; font-size: 16.5px; }
+  .camp .strap { margin: 0 16px 10px; font-size: 13px; color: var(--muted); }
+  .camp dl { margin: 0; padding: 0 16px; font-size: 13.5px; }
+  .camp dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--muted); margin-top: 9px; }
+  .camp dd { margin: 1px 0 0; }
+  .camp .tell { margin: 12px 16px 0; padding: 9px 12px; background: var(--tint); border-left: 3px solid var(--camp-a); font-size: 13.5px; }
+  .camp.b .tell { border-left-color: var(--camp-b); }
+  .camp .act { margin: 12px 16px 0; font-size: 13.5px; font-weight: 600; }
+  .camptag { display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: #fff; background: var(--camp-a); padding: 2px 8px; border-radius: 3px; vertical-align: 2px; margin-right: 8px; }
+  .camptag.b { background: var(--camp-b); }
+  .masthead .upd { font-family: var(--mono); font-size: 12px; color: var(--muted); }
   .notice { background: var(--alert-wash); border: 1px solid #E4C2C5; border-left: 3px solid var(--alert); padding: 12px 16px; margin: 16px 0; font-size: 14.5px; max-width: none; }
 
   ul.files { list-style: none; padding: 0; margin: 12px 0; border-top: 1px solid var(--line); }
@@ -110,6 +129,7 @@
   <div class="wrap">
     <span class="org">DENTAL PHISH WATCH</span>
     <span class="role">Sector security advisory — Australian dentistry</span>
+    <span class="upd">Updated 7 Aug 2026</span>
     <span class="adv">DPW-2026-001</span>
   </div>
 </header>
@@ -117,11 +137,12 @@
 <nav class="sectionnav" aria-label="Sections">
   <div class="wrap">
     <a class="hot" href="#starthere">START HERE</a>
-    <a href="#indicators">SPOT THE EMAIL</a>
+    <a href="#compare">WHICH SCAM IS IT?</a>
+    <a href="#campaign-a">A · FILE-SHARE</a>
+    <a href="#campaign-b">B · FAKE PRODA</a>
     <a href="#selfcheck">CHECK YOUR PRACTICE</a>
     <a href="#statistics">LIVE MAP</a>
-    <a href="#resources">FREE TOOLS &amp; HOW-TO</a>
-    <a href="#proda">PRODA SCAM</a>
+    <a href="#resources">FREE TOOLS</a>
     <a href="#reporting">REPORT ONE</a>
     <a href="technical.html">TECHNICAL</a>
   </div>
@@ -136,7 +157,7 @@
       <tr><th>Sector affected</th><td>Dental practices, Australia-wide (compromised senders identified to date in Victoria and New South Wales)</td></tr>
       <tr><th>Threat type</th><td>Two campaigns: (a) business email compromise → file-share lure → remote-access trojan (Windows); (b) Services Australia impersonation → PRODA/HPOS credential theft</td></tr>
       <tr><th>Last updated</th><td id="meta-updated">7 August 2026</td></tr>
-      <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 7).</td></tr>
+      <tr><th>Issued by</th><td>A Victorian dental practice affected by this campaign, in coordination with reports from peer clinics. Contact via the reporting form (section 9).</td></tr>
       <tr><th>Source code</th><td>All tooling and this site are open source for independent review: <a href="https://github.com/DentaSuite/dental-phish-guard" rel="noopener">github.com/DentaSuite/dental-phish-guard</a></td></tr>
     </table>
     <div class="starthere" id="starthere">
@@ -150,13 +171,16 @@
       <strong>Contents</strong>
       <ol>
         <li><a href="#summary">Summary</a></li>
-        <li><a href="#indicators">Indicators and example</a> <span class="muted">(incl. <a href="#proda">PRODA scam</a>)</span></li>
+        <li><a href="#compare">Two separate campaigns &mdash; which is it?</a></li>
+        <li><a href="#campaign-a">Campaign A &mdash; file-share malware</a></li>
+        <li><a href="#campaign-b">Campaign B &mdash; fake PRODA / HPOS</a></li>
         <li><a href="#statistics">Current statistics</a></li>
         <li><a href="#selfcheck">How to tell if your practice is affected</a></li>
         <li><a href="#actions">Recommended actions</a></li>
         <li><a href="#resources">Resources</a></li>
         <li><a href="#reporting">Reporting a sighting</a></li>
-        <li><a href="#response">Incident response after a click</a></li>
+        <li><a href="#response-a">Incident response &mdash; campaign A (malware)</a></li>
+        <li><a href="#response-b">Incident response &mdash; campaign B (PRODA)</a></li>
       </ol>
     </nav>
   </div>
@@ -165,63 +189,119 @@
 <section id="summary">
   <div class="wrap">
     <h2><span class="no">1</span>Summary</h2>
-    <p>An ongoing phishing campaign is propagating between Australian dental practices through compromised email accounts. After gaining access to a clinic's mailbox, the operator sends "shared a file with you" emails to the clinic's correspondents. Because these messages originate from a genuine, previously trusted account, they pass SPF, DKIM and DMARC authentication and are rarely intercepted by spam filtering.</p>
+    <p><b>Two distinct phishing campaigns are currently targeting Australian dental practices.</b> They are described separately throughout this advisory because they behave differently and require different responses. Section 2 sets them side by side so you can identify which one you are holding.</p>
+    <p><b>Campaign A</b> propagates between practices through compromised email accounts. After gaining access to a clinic's mailbox, the operator sends "shared a file with you" emails to that clinic's correspondents. Because the messages originate from a genuine, previously trusted account, they pass SPF, DKIM and DMARC authentication and are rarely intercepted by spam filtering.</p>
     <p>The linked pages deliver a remote-access trojan for Windows. During installation the malware displays a fake Windows Update screen; an infected machine observed by the issuing practice showed live hands-on-keyboard control by a remote operator. Follow-on activity has included repeat access attempts weeks after initial compromise.</p>
     <div class="figure">
       <img src="fake-update-screen.png" alt="Simulated fake Windows Update screen: black background, white text reading Working on updates 37% complete, Don't turn off your computer" style="width:100%;display:block">
-      <div class="fig-caption">Fig. 1a — What to watch for: a reconstruction of the fake "Windows Update" screen reported during infection. If a practice computer shows something like this unexpectedly — particularly just after a "shared file" link was opened, or with the mouse moving on its own — treat it as a live intrusion, not a real update. Simulated for awareness.</div>
+      <div class="fig-caption">Fig. 1 — Campaign A: a reconstruction of the fake "Windows Update" screen reported during infection. If a practice computer shows something like this unexpectedly — particularly just after a "shared file" link was opened, or with the mouse moving on its own — treat it as a live intrusion, not a real update. Simulated for awareness.</div>
     </div>
     <p>Each recipient practice that is compromised becomes a new distribution point to its own contact network. Compromised senders have been identified in both Victoria (a south-east Melbourne cluster consistent with propagation through local referral relationships) and New South Wales, indicating national reach: any practice that has ever corresponded with an affected clinic may be targeted regardless of state.</p>
-    <p>Link-scanning services return benign results for this infrastructure: the kit serves a decoy page to automated scanners. A "clean" URL scan is not evidence of safety for this campaign.</p>
+    <p>Link-scanning services return benign results for campaign A infrastructure: the kit serves a decoy page to automated scanners. A "clean" URL scan is not evidence of safety.</p>
+    <p><b>Campaign B</b>, first seen on 7 August 2026, is a different proposition. It impersonates Services Australia, claims the recipient's PRODA account must be re-linked to HPOS, and harvests the credentials entered on a counterfeit sign-in page. It installs nothing, and it does not arrive from a hijacked colleague — it is delivered cold from throwaway attacker domains. A stolen PRODA credential exposes HPOS, and through it Medicare claiming, DVA, the Australian Immunisation Register and patient records.</p>
   </div>
 </section>
 
-<section id="indicators">
+<section id="compare">
   <div class="wrap">
-    <h2><span class="no">2</span>Indicators and example</h2>
+    <h2><span class="no">2</span>Two separate campaigns &mdash; which one are you looking at?</h2>
+    <p>These are different attacks with different aims and, importantly, <b>different responses</b>. Getting the wrong one costs you: wiping a computer does nothing about a stolen PRODA login, and changing a password does nothing about a machine with an intruder on it. Work out which one you have before acting.</p>
+    <div class="camps">
+      <div class="camp">
+        <span class="badge">CAMPAIGN A &middot; SINCE MID-2026</span>
+        <h3>&ldquo;[Practice] shared a file with you&rdquo;</h3>
+        <p class="strap">Fake file-share notice that installs malware</p>
+        <dl>
+          <dt>WHO IT COMES FROM</dt><dd>A real dental practice you know, whose mailbox has been hijacked. Passes every authentication check.</dd>
+          <dt>WHAT IT WANTS</dt><dd>You to click a link and open it on a Windows PC.</dd>
+          <dt>WHAT IT DOES</dt><dd>Installs remote-control software behind a fake &ldquo;Windows Update&rdquo; screen. A person then operates the machine.</dd>
+          <dt>WHAT YOU LOSE</dt><dd>The computer, every password saved in its browsers, and your address book &mdash; which becomes the next target list.</dd>
+        </dl>
+        <div class="tell"><b>Tell-tale:</b> it asks you to open the link on your &ldquo;Desktop or Windows Laptop&rdquo;, and the link goes to an odd domain, usually <span class="m">.vu</span>.</div>
+        <div class="act">&rarr; Detail in <a href="#campaign-a">section 3</a> &middot; if someone clicked, <a href="#response-a">section 10</a></div>
+      </div>
+      <div class="camp b">
+        <span class="badge">CAMPAIGN B &middot; SINCE AUG 2026</span>
+        <h3>&ldquo;Re-link your PRODA account&rdquo;</h3>
+        <p class="strap">Fake Services Australia notice that steals your login</p>
+        <dl>
+          <dt>WHO IT COMES FROM</dt><dd>Throwaway attacker domains, delivered cold. <b>Not</b> a hacked colleague &mdash; a stranger impersonating Services Australia.</dd>
+          <dt>WHAT IT WANTS</dt><dd>You to sign in on a fake PRODA page.</dd>
+          <dt>WHAT IT DOES</dt><dd>Nothing to your computer. It simply captures whatever you type.</dd>
+          <dt>WHAT YOU LOSE</dt><dd>Your PRODA login, and with it HPOS: Medicare claiming, DVA, the immunisation register and patient records.</dd>
+        </dl>
+        <div class="tell"><b>Tell-tale:</b> the sign-in button does not go to a <span class="m">.gov.au</span> address &mdash; and neither does the link text that <i>reads</i> &ldquo;servicesaustralia.gov.au&rdquo;.</div>
+        <div class="act">&rarr; Detail in <a href="#campaign-b">section 4</a> &middot; if details were entered, <a href="#response-b">section 11</a></div>
+      </div>
+    </div>
+    <div class="notice"><b>The rule that beats both:</b> never act on the link, button or phone number printed in an unexpected email. For campaign A, telephone the apparent sender on a number you already have. For campaign B, reach PRODA by typing the address yourself or using your own bookmark, and look Services Australia up independently. In both cases the attacker controls what the email tells you.</div>
+  </div>
+</section>
+
+<section id="campaign-a">
+  <div class="wrap">
+    <h2><span class="no">3</span><span class="camptag">CAMPAIGN A</span>File-share lure delivering remote-access malware</h2>
     <div class="example">
       <div>
-        <img src="email-example.png" alt="Sample campaign email: imitation Microsoft file-share notification titled 'Dental Clinic Name shared a file with you' with an Open Document button">
-        <p class="muted" style="margin-top:8px">Fig. 1 — Campaign email received 23 July 2026 (sending clinic anonymised). Waves are near-identical: imitation Microsoft share card, "Open Document" button, instruction to open on a desktop computer.</p>
+        <img src="email-example.png" alt="Campaign A sample: imitation Microsoft file-share notification titled Dental Clinic Name shared a file with you, with an Open Document button">
+        <p class="muted" style="margin-top:8px">Fig. 2 &mdash; Campaign A email received 23 July 2026 (sending practice anonymised). Waves are near-identical: imitation Microsoft share card, &ldquo;Open Document&rdquo; button, instruction to open on a desktop computer.</p>
       </div>
       <div>
         <h3 style="margin-top:0">Message characteristics</h3>
         <ul>
-          <li>Subject of the form <i>"[Practice name] shared a file with you"</i>; sender is a real practice known to the recipient</li>
+          <li>Subject of the form <i>&ldquo;[Practice name] shared a file with you&rdquo;</i>; sender is a real practice known to the recipient</li>
           <li>Body styled as a Microsoft OneDrive/SharePoint share notification; single link, no attachment</li>
           <li>Instruction to open the link on a <b>desktop or Windows laptop</b> (the payload targets Windows only)</li>
-          <li>Recipients concealed via BCC ("undisclosed recipients"); no personal salutation</li>
-          <li>Send times across five held samples run from 03:41 to 10:58 AEST — two outside business hours, three during. An odd-hours timestamp is a useful prompt, but <b>time of day is not a reliable test</b> and a normal timestamp is not reassurance</li>
+          <li>Recipients concealed via BCC (&ldquo;undisclosed recipients&rdquo;); no personal salutation</li>
+          <li>Send times across five held samples run from 03:41 to 10:58 AEST &mdash; two outside business hours, three during. An odd-hours timestamp is a useful prompt, but <b>time of day is not a reliable test</b> and a normal timestamp is not reassurance</li>
         </ul>
         <h3>Network indicators</h3>
         <table class="plain">
           <tr><th>DOMAIN (do not visit)</th><th>OBSERVED</th></tr>
-          <tr><td class="ioc">avernix&#8203;.vu&#8203;/access</td><td>early wave</td></tr>
+          <tr><td class="ioc">avernix&#8203;.vu&#8203;/access</td><td>14 Jul 2026</td></tr>
           <tr><td class="ioc">uvanv&#8203;.vu</td><td>early wave</td></tr>
-          <tr><td class="ioc">xornavo&#8203;.vu&#8203;/file</td><td>12 Jul 2026</td></tr>
+          <tr><td class="ioc">xornavo&#8203;.vu&#8203;/file</td><td>13 Jul 2026</td></tr>
           <tr><td class="ioc">lornica&#8203;.vu&#8203;/dental</td><td>16 Jul 2026</td></tr>
           <tr><td class="ioc">clientesetupdoc&#8203;.vu&#8203;/access</td><td>23 Jul 2026</td></tr>
           <tr><td class="ioc">docsecdental&#8203;.vu&#8203;/mesh</td><td>23 Jul 2026</td></tr>
           <tr><td class="ioc">dytrix&#8203;.vu</td><td>24 Jul 2026</td></tr>
           <tr><td class="ioc">bzlvaka&#8203;.vu&#8203;/access</td><td>28 Jul 2026</td></tr>
           <tr><td class="ioc">dprvirz&#8203;.vu <span class="muted">(also doc.dprvirz&#8203;.vu)</span></td><td>31 Jul 2026</td></tr>
-          <tr><th colspan="2" style="background:#FBEFF0;color:#B01823">PRODA / HPOS CREDENTIAL CAMPAIGN</th></tr>
-          <tr><td class="ioc">verifications&#8203;.es&#8203;/verification/v333/v3</td><td>7 Aug 2026</td></tr>
-          <tr><td class="ioc">ghaspert&#8203;.com <span class="muted">(sender)</span></td><td>7 Aug 2026</td></tr>
-          <tr><td class="ioc">machsselbst&#8203;.com <span class="muted">(sender)</span></td><td>7 Aug 2026</td></tr>
         </table>
         <p class="muted">A newly registered domain is used for each wave. Detection should rely on the message pattern, not on any specific domain.</p>
       </div>
     </div>
-    <div class="notice"><b>Verification guidance:</b> before opening any unexpected file-share link — including from trusted colleagues — telephone the apparent sender on a known number and confirm they sent it. Do not verify by email reply: if the account is compromised, the operator controls the replies.</div>
-    <h3 id="proda">Related campaign: fake "PRODA / HPOS re-link" credential phishing</h3>
-    <p>A second campaign against the same sector, first seen 7 August 2026, impersonates <b>Services Australia</b>. The email claims your <b>PRODA</b> account is no longer linked to <b>HPOS</b> and must be "reconnected". Samples were received cold by a targeted Australian dental practice and forwarded to us for analysis; they used two throwaway sender domains within twelve minutes (<span class="m">ghaspert[.]com</span>, <span class="m">machsselbst[.]com</span>), and pointed every button — including link text reading <span class="m">servicesaustralia.gov.au/proda</span> — at <span class="m">verifications[.]es/verification/v333/v3</span>. This one steals PRODA logins rather than installing malware; a stolen PRODA login exposes Medicare/HPOS billing. The rule is identical: a genuine Services Australia link always ends in <b>.gov.au</b> — anything else is fake. Access PRODA only by typing <span class="m">proda.humanservices.gov.au</span> yourself, never via an emailed button. Our detection tools flag this campaign too.</p>
+    <div class="notice"><b>Verification guidance:</b> before opening any unexpected file-share link &mdash; including from trusted colleagues &mdash; telephone the apparent sender on a known number and confirm they sent it. Do not verify by email reply: if the account is compromised, the operator controls the replies.</div>
+  </div>
+</section>
+
+<section id="campaign-b">
+  <div class="wrap">
+    <h2><span class="no">4</span><span class="camptag b">CAMPAIGN B</span>Services Australia impersonation harvesting PRODA credentials</h2>
+    <p id="proda">First seen 7 August 2026. The email claims your <b>Provider Digital Access (PRODA)</b> account is no longer linked to <b>Health Professional Online Services (HPOS)</b> and must be reconnected, with a &ldquo;Reconnect PRODA&rdquo; button. It is formatted as a routine automated notice from Services Australia.</p>
+    <h3>Message characteristics</h3>
+    <ul>
+      <li>Subject <i>&ldquo;Re-link your PRODA account to continue using HPOS services&rdquo;</i>, sender display name &ldquo;PRODA&rdquo;</li>
+      <li>Delivered <b>cold from attacker-controlled domains</b> &mdash; unlike campaign A, the sender is not a hijacked colleague, so &ldquo;I know this practice&rdquo; is not a relevant test here</li>
+      <li>The action button points to <span class="m">verifications[.]es</span>, not a government address</li>
+      <li><b>The visible text reading &ldquo;servicesaustralia.gov.au/proda&rdquo; is itself a link to the same fake site</b> &mdash; reading the words and trusting them is the trap</li>
+      <li>The message prints its own &ldquo;Services Australia&rdquo; contact number, which must not be used</li>
+      <li>Two copies observed twelve minutes apart from different sender domains, indicating bulk sending</li>
+    </ul>
+    <h3>Network indicators</h3>
+    <table class="plain">
+      <tr><th>INDICATOR (do not visit)</th><th>ROLE</th><th>OBSERVED</th></tr>
+      <tr><td class="ioc">verifications&#8203;.es&#8203;/verification/v333/v3</td><td>credential-harvest page</td><td>7 Aug 2026</td></tr>
+      <tr><td class="ioc">ghaspert&#8203;.com</td><td>sender domain</td><td>7 Aug 2026</td></tr>
+      <tr><td class="ioc">machsselbst&#8203;.com</td><td>sender domain</td><td>7 Aug 2026</td></tr>
+    </table>
+    <div class="notice"><b>Verification guidance:</b> a genuine Services Australia link always ends in <span class="m">.gov.au</span>. Reach PRODA only by typing the address yourself or using your own bookmark, never through a button in an email. To confirm anything with Services Australia, look their number up on their website rather than using the one printed in the message.</div>
   </div>
 </section>
 
 <section id="statistics">
   <div class="wrap">
-    <h2><span class="no">3</span>Current statistics</h2>
+    <h2><span class="no">5</span>Current statistics</h2>
     <p>Figures are compiled from sighting reports and automated detections submitted by participating practices, and update as reports are received. Affected practices are treated as victims: they are notified privately by telephone and are not named. Map positions are rounded to approximately 10&nbsp;km.</p>
     <div class="figure">
       <div class="statgrid">
@@ -231,18 +311,18 @@
         <div class="cell"><div class="num" style="font-size:17px" id="s-last">–</div><div class="lbl">most recent detection</div></div>
       </div>
       <div id="map" aria-label="Map of approximate affected-practice locations"></div>
-      <div class="fig-caption" id="mapCaption">Fig. 2 — Approximate locations of identified compromised practices for which a location is known, shown where each sending practice is based. Local clusters follow referral networks, but identified senders span multiple states. Markers turn green once that practice has been contacted.</div>
+      <div class="fig-caption" id="mapCaption">Fig. 3 — Approximate locations of identified compromised practices for which a location is known, shown where each sending practice is based. Local clusters follow referral networks, but identified senders span multiple states. Markers turn green once that practice has been contacted.</div>
     </div>
   </div>
 </section>
 
 <section id="selfcheck">
   <div class="wrap">
-    <h2><span class="no">4</span>How to tell if your practice is affected</h2>
+    <h2><span class="no">6</span>How to tell if your practice is affected</h2>
     <p>There are two distinct questions: whether a practice computer is infected, and whether the practice mailbox is compromised and being used to attack others. Either can be true without the other, and a compromised mailbox usually produces no symptoms visible to its owner — most affected practices learn of it only when a colleague telephones to ask about a strange email.</p>
     <h3>Signs a computer is infected</h3>
     <ul>
-      <li>A staff member opened one of these links on a Windows machine, a download ran, or a <b>"Windows Update" screen appeared at an unusual time</b> (see Fig. 1a in section 1 for what it looks like) — treat the machine as compromised regardless of how it behaved afterwards.</li>
+      <li>A staff member opened one of these links on a Windows machine, a download ran, or a <b>"Windows Update" screen appeared at an unusual time</b> (see Fig. 1 in section 1 for what it looks like) — treat the machine as compromised regardless of how it behaved afterwards.</li>
       <li>Cursor movement or windows opening without input; the machine awake or busy when it should be idle.</li>
       <li>Remote-access software the practice did not install — check installed programs and the system tray for tools such as AnyDesk, ScreenConnect/ConnectWise, Atera, RustDesk, or TeamViewer that nobody recognises.</li>
       <li>Windows user accounts nobody created, or Microsoft Defender/antivirus found disabled.</li>
@@ -264,7 +344,7 @@
     <p>The same phrase searches work in Gmail and Outlook. Suspect matches from the first search carry the indicators in section 2: real clinic as sender, single link with no attachment, unusual domain, an instruction to open on a desktop computer, odd send times. Then ask every staff member, openly and without blame, whether anyone opened such a link and whether any machine has shown the symptoms above. The flowchart below walks a practice through the outcomes; a printable copy is in section 6.</p>
     <div class="figure">
       <a href="downloads/Staff-Sweep-Flowchart.pdf"><img src="sweep-flowchart.png" alt="Flowchart: search the mailbox for share-lure phrases; if matches are found, question staff; branch to contain-and-report, precautionary lockdown, or full incident response depending on answers" style="width:100%;display:block"></a>
-      <div class="fig-caption">Fig. 3 — Staff sweep procedure. Click to open the printable A4 version.</div>
+      <div class="fig-caption">Fig. 4 — Staff sweep procedure. Click to open the printable A4 version.</div>
     </div>
     <h3>Ten-minute self-check</h3>
     <ol>
@@ -280,12 +360,12 @@
 
 <section id="actions">
   <div class="wrap">
-    <h2><span class="no">5</span>Recommended actions</h2>
+    <h2><span class="no">7</span>Recommended actions</h2>
     <h3>All staff</h3>
     <ul>
       <li>Treat any unexpected "shared a file/folder" email as suspect regardless of sender; verify by telephone before opening links.</li>
       <li>Do not open share links on a practice computer because the message requests it; that instruction is itself an indicator.</li>
-      <li>Report suspect messages to the practice owner or manager, and via section 7 below.</li>
+      <li>Report suspect messages to the practice owner or manager, and via section 9 below.</li>
     </ul>
     <h3>Practice owners and IT providers</h3>
     <ul>
@@ -301,7 +381,7 @@
 
 <section id="resources">
   <div class="wrap">
-    <h2><span class="no">6</span>Resources</h2>
+    <h2><span class="no">8</span>Resources</h2>
     <ul class="files">
       <li><span class="ftype">PDF · A4 poster</span> <a href="downloads/DO-NOT-OPEN-Poster.pdf" download>"Do not open" staff notice</a>
         <span class="fdesc">The sample email with identification and response instructions, for display where email is checked. <a href="https://github.com/DentaSuite/dental-phish-guard/blob/main/poster.html" rel="noopener">Source on GitHub</a></span></li>
@@ -324,13 +404,13 @@
     <p>Download the extension zip above, right-click it and choose <b>Extract All</b> (remember where the folder goes — usually Downloads), then:</p>
     <div class="figure">
       <img src="install-steps.png" alt="Four steps: open chrome://extensions, switch on Developer mode, click Load unpacked and choose the extracted folder, extension appears in the list" style="width:100%;display:block">
-      <div class="fig-caption">Fig. 4 — Installing in Chrome. In Microsoft Edge the address is edge://extensions; every other step is identical. Repeat on each computer that checks email.</div>
+      <div class="fig-caption">Fig. 5 — Installing in Chrome. In Microsoft Edge the address is edge://extensions; every other step is identical. Repeat on each computer that checks email.</div>
     </div>
     <h3>What it does once installed</h3>
     <p>Nothing, most of the time — it sits quietly. But when an email matching this attack is opened in Gmail or Outlook web, a red warning appears above the message before anyone can click, spelling out exactly why it's dangerous:</p>
     <div class="figure">
       <img src="extension-banner.png" alt="A phishing email in webmail with the extension's red DANGER banner above it listing the reasons it was flagged" style="width:100%;display:block">
-      <div class="fig-caption">Fig. 5 — A live capture of the extension flagging a demonstration email. It also keeps a private list of which clinics sent flagged emails (click its toolbar icon) so they can be phoned and warned, and — unless you switch it off in that popup — sends the sender address and attack domains (never the email itself) to this advisory's statistics.</div>
+      <div class="fig-caption">Fig. 6 — A live capture of the extension flagging a demonstration email. It also keeps a private list of which clinics sent flagged emails (click its toolbar icon) so they can be phoned and warned, and — unless you switch it off in that popup — sends the sender address and attack domains (never the email itself) to this advisory's statistics.</div>
     </div>
     <h3>Using the printed materials</h3>
     <p>Print the <b>poster</b> and the <b>sweep flowchart</b> on A4 and put them where email is actually read — the front desk and the staff room, not the filing cabinet. Open the <b>booklet</b> in Word, type your practice name on the cover, print a copy per staff member, and walk through it at a team meeting — it takes about 15 minutes and reception staff are the most important audience. The <b>IT guide</b> isn't for you: forward it to whoever looks after your computers with the message "please do these and confirm in writing".</p>
@@ -340,7 +420,7 @@
 
 <section id="reporting">
   <div class="wrap">
-    <h2><span class="no">7</span>Reporting a sighting</h2>
+    <h2><span class="no">9</span>Reporting a sighting</h2>
     <p>Reports serve two purposes: the practice whose account was compromised is notified privately by telephone, and new infrastructure is added to the indicator list, the browser extension, and takedown requests. Reports are reviewed individually; nothing is published automatically and reporting practices are not named.</p>
     <p class="muted">The most useful evidence is the original message file. In Gmail: message menu (⋮) → "Download message". Attach it to the pre-filled email this form produces. Do not include patient information.</p>
     <form id="reportForm">
@@ -371,9 +451,10 @@
   </div>
 </section>
 
-<section id="response">
+<section id="response-a">
   <div class="wrap">
-    <h2><span class="no">8</span>Incident response after a click</h2>
+    <h2><span class="no">10</span><span class="camptag">CAMPAIGN A</span>Incident response &mdash; malware, after a click</h2>
+    <p>Use this when someone opened a file-share link and something ran. If instead someone typed credentials into a fake PRODA page, this is the wrong list &mdash; go to <a href="#response-b">section 11</a>.</p>
     <ol>
       <li>Disconnect the affected computer from the network immediately and cease using it. Containment is achieved at this point — the remaining steps are not a race.</li>
       <li><b>Before anything is wiped, notify your indemnity or cyber insurer.</b> Many policies require the insurer's consent before remediation and will appoint the responder; wiping first can prejudice cover and destroys the only evidence for the data-breach assessment. Take a disk image, or remove the drive and set the machine aside intact.</li>
@@ -392,8 +473,28 @@
       <li>Advise correspondents that mail from the practice's address may be malicious.</li>
       <li>If patient information may have been accessed, you are the entity with the notification obligation — not your IT provider and not your software vendor. Under the Notifiable Data Breaches scheme you must complete a reasonable and expeditious assessment <b>within 30 days</b> of becoming aware, and notify the OAIC and affected patients if serious harm is likely. Involve your indemnity provider immediately; note that professional indemnity and cyber cover are different products and you may hold one without the other.</li>
       <li>Report the incident to the ACSC at <a href="https://www.cyber.gov.au/report" rel="noopener">cyber.gov.au/report</a>, and review practice bank accounts and recent invoices for unauthorised changes.</li>
-      <li><b>If the incident involved the PRODA/HPOS lure rather than the file-share malware</b> — that is, someone entered credentials on a fake Services Australia page — reimaging is not the priority and the steps above are the wrong ones. Follow the PRODA checklist instead: <a href="triage.html#out_proda_creds">what to do if PRODA details were entered</a>.</li>
     </ol>
+  </div>
+</section>
+
+
+<section id="response-b">
+  <div class="wrap">
+    <h2><span class="no">11</span><span class="camptag b">CAMPAIGN B</span>Incident response &mdash; PRODA credentials entered</h2>
+    <p>Use this when someone typed a PRODA username, password or verification code into a page reached from an email. <b>The computer does not need wiping</b> &mdash; this campaign installs nothing. The exposure is the account and everything HPOS reaches through it.</p>
+    <ol>
+      <li>Change the PRODA password immediately, from a device that did not open the link. Reach PRODA by typing the address yourself or using your own bookmark &mdash; never a link in an email.</li>
+      <li>Do not use any phone number or link supplied by the suspicious message; the scam prints its own &ldquo;Services Australia&rdquo; contact details. Look the real number up on the Services Australia website.</li>
+      <li>Telephone Services Australia and report the PRODA account as compromised, so they can review it.</li>
+      <li>Inspect the PRODA account for changes you did not make: linked services, linked organisations, <b>delegates</b>, registration authority details, and the contact email and mobile. Adding a delegate is how an operator keeps access after a password change, so a password reset alone is not sufficient.</li>
+      <li>Confirm the multi-factor method on the account is yours and was not switched to an attacker&rsquo;s device.</li>
+      <li>Review HPOS for unauthorised activity: claims not submitted by the practice, altered bank or payment details, new delegations, and anything recorded against your provider number.</li>
+      <li>Change the same password anywhere else it is used, particularly if it also protects email, banking or practice software.</li>
+      <li><b>Treat it as a patient-data incident, not only a billing one.</b> PRODA and HPOS reach Medicare, DVA and Australian Immunisation Register records. Where My Health Record is used, notification to the ADHA is a separate mandatory duty alongside any Notifiable Data Breaches assessment.</li>
+      <li>Contact your indemnity or cyber insurer today; professional indemnity and cyber cover are different products and you may hold only one.</li>
+      <li>Report to the ACSC at <a href="https://www.cyber.gov.au/report" rel="noopener">cyber.gov.au/report</a> and via <a href="#reporting">section 9</a>, and keep monitoring claims and payments for several months &mdash; provider-number fraud may not surface immediately.</li>
+    </ol>
+    <div class="notice">A guided version of this checklist, with tick-boxes, is in the <a href="triage.html#out_proda_creds">triage tool</a>.</div>
   </div>
 </section>
 
@@ -436,7 +537,7 @@
       }
       if (bounds.length) map.fitBounds(bounds, { padding: [44, 44], maxZoom: 10 });
     })
-    .catch(() => { document.getElementById("mapCaption").textContent = "Fig. 2 — Live figures temporarily unavailable."; });
+    .catch(() => { document.getElementById("mapCaption").textContent = "Fig. 3 — Live figures temporarily unavailable."; });
 
   // Anonymous usage counters (counts only — no identities, no answers).
   const pgEvent = (kind, detail) => fetch("https://vgtwdkwdtmgjagbtqrcz.supabase.co/rest/v1/phishwatch_events", {
